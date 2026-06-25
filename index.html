@@ -17,7 +17,6 @@
             min-height: 100vh;
         }
 
-        /* ===== GENERAL ===== */
         .view {
             display: none;
             min-height: 100vh;
@@ -27,7 +26,6 @@
             display: block;
         }
 
-        /* ===== ONBOARDING ===== */
         #onboardingView {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
@@ -208,7 +206,6 @@
             line-height: 1.5;
         }
 
-        /* ===== DASHBOARD ===== */
         #dashboardView {
             padding: 16px;
         }
@@ -470,7 +467,6 @@
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
-        /* ===== DETALLES DEL SERVICE ===== */
         #serviceDetailsView {
             padding: 16px;
         }
@@ -949,7 +945,6 @@
         </div>
 
         <form id="registroForm">
-            <!-- SELECTOR DE MODELO -->
             <div class="form-group">
                 <label>¿Qué modelo VW tenés?</label>
                 <div class="model-selector">
@@ -973,7 +968,6 @@
                 <div class="error-message" id="modelError">Por favor, selecciona un modelo</div>
             </div>
 
-            <!-- AÑO DEL AUTO -->
             <div class="form-group">
                 <label for="yearSelect">¿Qué año es tu auto?</label>
                 <select id="yearSelect" required>
@@ -982,14 +976,24 @@
                 <div class="error-message" id="yearError">Por favor, selecciona un año</div>
             </div>
 
-            <!-- KM ACTUALES -->
+            <!-- SELECTOR DE MOTOR PARA GOLF (Aparece solo si selecciona Golf) -->
+            <div class="form-group" id="motorSelectorGroup" style="display: none;">
+                <label>¿Qué tipo de motor tiene tu Golf?</label>
+                <select id="motorSelect">
+                    <option value="">Selecciona el motor</option>
+                    <option value="1.6">1.6 (con correa)</option>
+                    <option value="tsi">TSI (con correa)</option>
+                    <option value="cadena">2.0 / 2.5 (con cadena)</option>
+                </select>
+                <div class="error-message" id="motorError">Por favor, selecciona el motor</div>
+            </div>
+
             <div class="form-group">
                 <label for="kmInput">¿Cuántos kilómetros tiene ahora?</label>
                 <input type="number" id="kmInput" placeholder="Ej: 45000" min="0" max="300000" required>
                 <div class="error-message" id="kmError">Ingresa un número entre 0 y 300.000 km</div>
             </div>
 
-            <!-- USO MENSUAL -->
             <div class="usage-buttons">
                 <span class="usage-label">Estima tu uso mensual:</span>
                 <div class="buttons-grid">
@@ -1086,7 +1090,7 @@
 
     <div class="next-action-card">
         <div class="card-title">Próxima acción recomendada</div>
-        <div class="service-name" id="nextServiceName">Service a 60.000 km</div>
+        <div class="service-name" id="nextServiceName">Service a 15.000 km</div>
         
         <div class="service-info">
             <div class="info-block">
@@ -1126,8 +1130,8 @@
     </div>
 
     <div class="service-banner">
-        <div class="service-km" id="serviceKm">60.000 km</div>
-        <div class="service-desc" id="serviceDesc">Service mayor con cambio de correa de distribución</div>
+        <div class="service-km" id="serviceKm">15.000 km</div>
+        <div class="service-desc" id="serviceDesc">Service básico y control general</div>
     </div>
 
     <div class="summary-card">
@@ -1138,7 +1142,7 @@
         </div>
         <div class="summary-row">
             <span class="summary-label">Mano de obra (talleres locales)</span>
-            <span class="summary-value" id="laborEstimate">$800 - $1.200</span>
+            <span class="summary-value" id="laborEstimate">$300 - $500</span>
         </div>
         <div class="summary-row">
             <span class="summary-label"><strong>Total estimado</strong></span>
@@ -1200,119 +1204,89 @@
 </div>
 
 <script>
-        // ===== BASE DE DATOS DE MODELOS Y SERVICIOS =====
+        // ===== BASE DE DATOS CON DATOS CORRECTOS =====
         const modelsDatabase = {
             gol: {
                 name: 'Gol',
                 yearRange: { min: 2006, max: 2022 },
                 maintenancePlan: {
-                    10000: {
-                        name: 'Service de 10.000 km',
-                        description: 'Service básico y control general',
-                        laborEstimate: '300 - 500',
-                        parts: {
-                            'Fluidos y Filtros': [
-                                { name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 },
-                                { name: 'Filtro de aceite', brand: 'Bosch', quantity: 1, unit: 'un', price: 150 },
-                                { name: 'Filtro de aire', brand: 'Bosch', quantity: 1, unit: 'un', price: 200 }
-                            ]
-                        }
-                    },
-                    40000: {
-                        name: 'Service de 40.000 km',
-                        description: 'Service mayor con cambio de algunos fluidos',
-                        laborEstimate: '500 - 800',
-                        parts: {
-                            'Fluidos y Filtros': [
-                                { name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 },
-                                { name: 'Filtro de aceite', brand: 'Bosch', quantity: 1, unit: 'un', price: 150 },
-                                { name: 'Filtro de aire', brand: 'Bosch', quantity: 1, unit: 'un', price: 200 }
-                            ]
-                        }
-                    },
-                    60000: {
-                        name: 'Service de 60.000 km',
-                        description: 'Service mayor con cambio de correa de distribución',
-                        laborEstimate: '800 - 1.200',
-                        parts: {
-                            'Correa y Accesorios': [
-                                { name: 'Correa de distribución', brand: 'SKF/Gates', quantity: 1, unit: 'un', price: 2500 },
-                                { name: 'Tensor de correa', brand: 'SKF', quantity: 1, unit: 'un', price: 650 }
-                            ],
-                            'Fluidos': [
-                                { name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 },
-                                { name: 'Refrigerante', brand: 'BASF', quantity: 5, unit: 'L', price: 200 }
-                            ]
-                        }
-                    },
-                    100000: { name: 'Service de 100.000 km', description: 'Service mayor', laborEstimate: '600 - 900', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } },
-                    140000: { name: 'Service de 140.000 km', description: 'Service mayor con correa de distribución', laborEstimate: '800 - 1.200', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF/Gates', quantity: 1, unit: 'un', price: 2500 }] } },
-                    180000: { name: 'Service de 180.000 km', description: 'Service mayor', laborEstimate: '600 - 900', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } }
+                    15000: { name: 'Service de 15.000 km', description: 'Control general del auto', laborEstimate: '350 - 550', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }, { name: 'Filtro de aceite', brand: 'Bosch', quantity: 1, unit: 'un', price: 150 }, { name: 'Filtro de aire', brand: 'Bosch', quantity: 1, unit: 'un', price: 200 }] } },
+                    30000: { name: 'Service de 30.000 km', description: 'Cambio de fluidos y filtros', laborEstimate: '400 - 600', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }, { name: 'Filtro de aceite', brand: 'Bosch', quantity: 1, unit: 'un', price: 150 }] } },
+                    45000: { name: 'Service de 45.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } },
+                    60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service mayor con cambio de correa de distribución', laborEstimate: '800 - 1.200', parts: { 'Correa y Accesorios': [{ name: 'Correa de distribución', brand: 'SKF/Gates', quantity: 1, unit: 'un', price: 2500 }, { name: 'Tensor de correa', brand: 'SKF', quantity: 1, unit: 'un', price: 650 }], 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }, { name: 'Refrigerante', brand: 'BASF', quantity: 5, unit: 'L', price: 200 }] } },
+                    75000: { name: 'Service de 75.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } },
+                    90000: { name: 'Service de 90.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } },
+                    120000: { name: 'Service de 120.000 km + Cambio de correa', description: 'Service mayor con cambio de correa', laborEstimate: '800 - 1.200', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF/Gates', quantity: 1, unit: 'un', price: 2500 }] } },
+                    180000: { name: 'Service de 180.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } }
                 }
             },
             golf: {
                 name: 'Golf',
-                yearRange: { min: 2007, max: 2022 },
+                yearRange: { min: 2006, max: 2021 },
+                motorTypes: ['1.6', 'tsi', 'cadena'],
                 maintenancePlan: {
-                    15000: { name: 'Service de 15.000 km', description: 'Service básico', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
-                    30000: { name: 'Service de 30.000 km', description: 'Service mayor', laborEstimate: '600 - 900', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
-                    60000: { name: 'Service de 60.000 km', description: 'Service con cambio de correa', laborEstimate: '900 - 1.300', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2800 }] } },
-                    120000: { name: 'Service de 120.000 km', description: 'Service mayor', laborEstimate: '700 - 1.000', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }
+                    '1.6': {
+                        15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
+                        30000: { name: 'Service de 30.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
+                        60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service con cambio de correa de distribución', laborEstimate: '900 - 1.300', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2800 }] } },
+                        120000: { name: 'Service de 120.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }
+                    },
+                    'tsi': {
+                        15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
+                        30000: { name: 'Service de 30.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
+                        60000: { name: 'Service de 60.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
+                        90000: { name: 'Service de 90.000 km + Cambio de correa', description: 'Service con cambio de correa de distribución', laborEstimate: '950 - 1.400', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2900 }] } },
+                        180000: { name: 'Service de 180.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }
+                    },
+                    'cadena': {
+                        15000: { name: 'Service de 15.000 km', description: 'Control general (sin cambio de correa, usa cadena)', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
+                        30000: { name: 'Service de 30.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
+                        60000: { name: 'Service de 60.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
+                        120000: { name: 'Service de 120.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }
+                    }
                 }
             },
             vento: {
                 name: 'Vento',
-                yearRange: { min: 2009, max: 2022 },
+                yearRange: { min: 2006, max: 2022 },
                 maintenancePlan: {
-                    10000: { name: 'Service de 10.000 km', description: 'Service básico', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } },
-                    40000: { name: 'Service de 40.000 km', description: 'Service mayor', laborEstimate: '550 - 800', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } },
-                    80000: { name: 'Service de 80.000 km', description: 'Service con correa', laborEstimate: '850 - 1.200', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'Gates', quantity: 1, unit: 'un', price: 2600 }] } },
-                    160000: { name: 'Service de 160.000 km', description: 'Service mayor', laborEstimate: '700 - 1.000', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } }
+                    15000: { name: 'Service de 15.000 km', description: 'Control general (sin cambio de correa, usa cadena)', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } },
+                    30000: { name: 'Service de 30.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } },
+                    45000: { name: 'Service de 45.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } },
+                    60000: { name: 'Service de 60.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } },
+                    120000: { name: 'Service de 120.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } }
                 }
             },
             suran: {
                 name: 'Suran',
-                yearRange: { min: 2010, max: 2022 },
+                yearRange: { min: 2006, max: 2019 },
                 maintenancePlan: {
-                    10000: { name: 'Service de 10.000 km', description: 'Service básico', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } },
-                    40000: { name: 'Service de 40.000 km', description: 'Service mayor', laborEstimate: '600 - 850', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } },
-                    80000: { name: 'Service de 80.000 km', description: 'Service con correa', laborEstimate: '900 - 1.300', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2700 }] } }
+                    15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } },
+                    30000: { name: 'Service de 30.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } },
+                    45000: { name: 'Service de 45.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } },
+                    60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service mayor con cambio de correa de distribución', laborEstimate: '900 - 1.300', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2700 }] } },
+                    120000: { name: 'Service de 120.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } }
                 }
             }
         };
 
-        const zones = [
-            'San Isidro', 'La Boca', 'Flores', 'Caballito', 'Recoleta',
-            'Belgrano', 'Barracas', 'Boedo', 'Balvanera', 'Moreno',
-            'Lanús', 'Avellaneda', 'Temperley', 'Ramos Mejía'
-        ];
+        const zones = ['San Isidro', 'La Boca', 'Flores', 'Caballito', 'Recoleta', 'Belgrano', 'Barracas', 'Boedo', 'Balvanera', 'Moreno', 'Lanús', 'Avellaneda', 'Temperley', 'Ramos Mejía'];
 
         const workshopsByZone = {
-            'San Isidro': [
-                { name: 'Taller VW Expert - San Isidro', rating: 4.8, reviews: 127, phone: '1140123456' }
-            ],
-            'La Boca': [
-                { name: 'Service Gol Master - La Boca', rating: 4.7, reviews: 89, phone: '1143567890' }
-            ],
-            'Flores': [
-                { name: 'Estación de Servicio VW - Flores', rating: 4.5, reviews: 56, phone: '1145678901' }
-            ],
-            'Caballito': [
-                { name: 'Taller Oficial Caballito', rating: 4.7, reviews: 102, phone: '1146789012' }
-            ],
-            'Recoleta': [
-                { name: 'VW Service Recoleta', rating: 4.9, reviews: 134, phone: '1147890123' }
-            ]
+            'San Isidro': [{ name: 'Taller VW Expert - San Isidro', rating: 4.8, reviews: 127, phone: '1140123456' }],
+            'La Boca': [{ name: 'Service Gol Master - La Boca', rating: 4.7, reviews: 89, phone: '1143567890' }],
+            'Flores': [{ name: 'Estación de Servicio VW - Flores', rating: 4.5, reviews: 56, phone: '1145678901' }],
+            'Caballito': [{ name: 'Taller Oficial Caballito', rating: 4.7, reviews: 102, phone: '1146789012' }],
+            'Recoleta': [{ name: 'VW Service Recoleta', rating: 4.9, reviews: 134, phone: '1147890123' }]
         };
 
-        // ===== VARIABLES GLOBALES =====
         let selectedModel = null;
+        let selectedMotor = null;
         let selectedZone = 'San Isidro';
-        let currentServiceKm = 60000;
+        let currentServiceKm = 15000;
         let selectedUsage = null;
         let currentModelData = null;
 
-        // ===== INICIALIZACIÓN =====
         window.addEventListener('DOMContentLoaded', function() {
             initOnboarding();
             checkUserData();
@@ -1330,8 +1304,15 @@
                     selectedModel = btn.dataset.model;
                     document.getElementById('modelError').style.display = 'none';
 
-                    // Actualizar rango de años
                     updateYearSelect(selectedModel);
+                    
+                    // Mostrar selector de motor si es Golf
+                    if (selectedModel === 'golf') {
+                        document.getElementById('motorSelectorGroup').style.display = 'block';
+                    } else {
+                        document.getElementById('motorSelectorGroup').style.display = 'none';
+                        selectedMotor = null;
+                    }
                 });
             });
 
@@ -1388,6 +1369,11 @@
                 isValid = false;
             }
 
+            if (selectedModel === 'golf' && !selectedMotor) {
+                document.getElementById('motorError').style.display = 'block';
+                isValid = false;
+            }
+
             if (!km || km < 0 || km > 300000) {
                 document.getElementById('kmError').style.display = 'block';
                 isValid = false;
@@ -1401,6 +1387,7 @@
             if (isValid) {
                 const userData = {
                     model: selectedModel,
+                    motor: selectedMotor,
                     year: year,
                     km: parseInt(km),
                     monthlyUsage: parseInt(selectedUsage),
@@ -1417,7 +1404,6 @@
             }
         }
 
-        // ===== NAVEGACIÓN =====
         function showView(viewId) {
             document.querySelectorAll('.view').forEach(view => {
                 view.classList.remove('active');
@@ -1441,7 +1427,6 @@
             loadHistorial();
         }
 
-        // ===== DASHBOARD =====
         function loadDashboard() {
             const userData = JSON.parse(localStorage.getItem('golServiceUser'));
             if (!userData) return;
@@ -1460,7 +1445,14 @@
 
         function calculateNextService(userData) {
             const currentKm = userData.km;
-            const maintenancePlan = Object.keys(currentModelData.maintenancePlan)
+            
+            // Obtener plan de mantenimiento según modelo y motor (si aplica)
+            let plan = currentModelData.maintenancePlan;
+            if (userData.motor && currentModelData.maintenancePlan[userData.motor]) {
+                plan = currentModelData.maintenancePlan[userData.motor];
+            }
+
+            const maintenancePlan = Object.keys(plan)
                 .map(k => ({ km: parseInt(k) }))
                 .sort((a, b) => a.km - b.km);
 
@@ -1471,7 +1463,7 @@
             }
 
             currentServiceKm = nextService.km;
-            const serviceInfo = currentModelData.maintenancePlan[nextService.km];
+            const serviceInfo = plan[nextService.km];
             const kmRemaining = nextService.km - currentKm;
             const dailyKm = userData.monthlyUsage / 30;
             const daysRemaining = Math.ceil(kmRemaining / dailyKm);
@@ -1559,10 +1551,15 @@
             alert('✅ Kilometraje actualizado');
         }
 
-        // ===== DETALLES DEL SERVICE =====
         function loadServiceDetails() {
             const userData = JSON.parse(localStorage.getItem('golServiceUser'));
-            const service = currentModelData.maintenancePlan[currentServiceKm];
+            
+            let plan = currentModelData.maintenancePlan;
+            if (userData.motor && currentModelData.maintenancePlan[userData.motor]) {
+                plan = currentModelData.maintenancePlan[userData.motor];
+            }
+
+            const service = plan[currentServiceKm];
 
             document.getElementById('serviceKm').textContent = `${currentServiceKm.toLocaleString('es-AR')} km`;
             document.getElementById('serviceDesc').textContent = service.description;
@@ -1687,7 +1684,6 @@
             window.open(whatsappLink, '_blank');
         }
 
-        // ===== MODAL: YA LO HICE =====
         function openDoneModal() {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('serviceDate').value = today;
@@ -1732,7 +1728,6 @@
             showDashboard();
         }
 
-        // ===== HISTORIAL =====
         function loadHistorial() {
             const history = JSON.parse(localStorage.getItem('historialMantenimientos')) || [];
             const container = document.getElementById('historyContainer');
@@ -1777,6 +1772,12 @@
             timelineHTML += '</div>';
             container.innerHTML = timelineHTML;
         }
+
+        // Selector de motor para Golf
+        document.getElementById('motorSelect')?.addEventListener('change', (e) => {
+            selectedMotor = e.target.value;
+            document.getElementById('motorError').style.display = 'none';
+        });
     </script>
 </body>
 </html>
