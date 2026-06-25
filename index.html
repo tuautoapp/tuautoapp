@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GolService AR - MVP</title>
+    <title>tuAutoApp - MVP</title>
     <style>
         * {
             margin: 0;
@@ -32,6 +32,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            min-height: 100vh;
         }
 
         .onboarding-container {
@@ -208,6 +209,7 @@
 
         #dashboardView {
             padding: 16px;
+            padding-bottom: 80px;
         }
 
         .header {
@@ -227,6 +229,11 @@
         .header-left p {
             font-size: 12px;
             color: #999;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 8px;
         }
 
         .menu-btn {
@@ -467,8 +474,10 @@
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
-        #serviceDetailsView {
+        /* PERFIL */
+        #profileView {
             padding: 16px;
+            padding-bottom: 80px;
         }
 
         .back-header {
@@ -497,6 +506,48 @@
             font-size: 24px;
             color: #1a1a1a;
             font-weight: 700;
+        }
+
+        .profile-form {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-full {
+            grid-column: 1 / -1;
+        }
+
+        .profile-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: all 0.3s;
+        }
+
+        .profile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* DETALLES DEL SERVICE */
+        #serviceDetailsView {
+            padding: 16px;
+            padding-bottom: 80px;
         }
 
         .service-banner {
@@ -806,6 +857,7 @@
 
         #historialView {
             padding: 16px;
+            padding-bottom: 80px;
         }
 
         .timeline {
@@ -930,6 +982,10 @@
             .model-selector {
                 grid-template-columns: 1fr;
             }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -940,8 +996,8 @@
     <div class="onboarding-container">
         <div class="logo-section">
             <div class="logo-icon">🚗</div>
-            <h1>GolService AR</h1>
-            <p class="subtitle">Mantén tu Volkswagen en perfecto estado</p>
+            <h1>tuAutoApp</h1>
+            <p class="subtitle">Mantén tu auto en perfecto estado</p>
         </div>
 
         <form id="registroForm">
@@ -976,7 +1032,6 @@
                 <div class="error-message" id="yearError">Por favor, selecciona un año</div>
             </div>
 
-            <!-- SELECTOR DE MOTOR PARA GOLF (Aparece solo si selecciona Golf) -->
             <div class="form-group" id="motorSelectorGroup" style="display: none;">
                 <label>¿Qué tipo de motor tiene tu Golf?</label>
                 <select id="motorSelect">
@@ -995,23 +1050,23 @@
             </div>
 
             <div class="usage-buttons">
-                <span class="usage-label">Estima tu uso mensual:</span>
+                <span class="usage-label">¿Cuántos km manejás por AÑO?</span>
                 <div class="buttons-grid">
-                    <button type="button" class="usage-btn" data-usage="500">
+                    <button type="button" class="usage-btn" data-usage="6000">
                         <div>🚗</div>
-                        <div>500 km</div>
+                        <div>6.000 km/año</div>
                     </button>
-                    <button type="button" class="usage-btn" data-usage="1000">
+                    <button type="button" class="usage-btn" data-usage="12000">
                         <div>🚗</div>
-                        <div>1.000 km</div>
+                        <div>12.000 km/año</div>
                     </button>
-                    <button type="button" class="usage-btn" data-usage="1500">
+                    <button type="button" class="usage-btn" data-usage="18000">
                         <div>🚗</div>
-                        <div>1.500 km</div>
+                        <div>18.000 km/año</div>
                     </button>
-                    <button type="button" class="usage-btn" data-usage="2000">
+                    <button type="button" class="usage-btn" data-usage="24000">
                         <div>🚗</div>
-                        <div>2.000+ km</div>
+                        <div>24.000+ km/año</div>
                     </button>
                 </div>
                 <div class="error-message" id="usageError">Por favor, selecciona un uso</div>
@@ -1033,11 +1088,14 @@
             <h1 id="carTitle">Gol 2020</h1>
             <p id="carKm">45.000 km</p>
         </div>
-        <button class="menu-btn" onclick="showHistorial()">📋</button>
+        <div class="header-buttons">
+            <button class="menu-btn" onclick="showHistorial()" title="Historial">📋</button>
+            <button class="menu-btn" onclick="showProfile()" title="Perfil">👤</button>
+        </div>
     </div>
 
     <div class="km-reminder" id="kmReminder">
-        <strong>📅 Recordatorio mensual:</strong> Hace un mes que no actualizas tu km. ¿Cuántos tienes ahora?
+        <strong>📅 Recordatorio mensual:</strong> Actualiza tu km para una estimación más precisa
         <button onclick="toggleKmUpdate()">Actualizar</button>
     </div>
 
@@ -1122,6 +1180,73 @@
     </div>
 </div>
 
+<!-- ===== VISTA: PERFIL ===== -->
+<div id="profileView" class="view">
+    <div class="back-header">
+        <button class="back-btn" onclick="showDashboard()">←</button>
+        <h1>Mi Perfil</h1>
+    </div>
+
+    <div class="profile-form">
+        <form id="profileForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="profileNombre">Nombre *</label>
+                    <input type="text" id="profileNombre" placeholder="Tu nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="profileApellido">Apellido *</label>
+                    <input type="text" id="profileApellido" placeholder="Tu apellido" required>
+                </div>
+            </div>
+
+            <div class="form-group form-full">
+                <label for="profileTelefono">Teléfono (con WhatsApp) *</label>
+                <input type="tel" id="profileTelefono" placeholder="Ej: +54 9 11 XXXX-XXXX" required>
+            </div>
+
+            <div class="form-group form-full">
+                <label for="profileEmail">Email *</label>
+                <input type="email" id="profileEmail" placeholder="tu@email.com" required>
+            </div>
+
+            <div class="form-group form-full">
+                <label for="profilePatente">Patente del auto (opcional)</label>
+                <input type="text" id="profilePatente" placeholder="Ej: ABC 123">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="profileGenero">Género *</label>
+                    <select id="profileGenero" required>
+                        <option value="">Selecciona</option>
+                        <option value="masculino">Hombre</option>
+                        <option value="femenino">Mujer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="profileColor">Color del auto *</label>
+                    <select id="profileColor" required>
+                        <option value="">Selecciona un color</option>
+                        <option value="blanco">Blanco</option>
+                        <option value="negro">Negro</option>
+                        <option value="gris">Gris</option>
+                        <option value="plata">Plata</option>
+                        <option value="rojo">Rojo</option>
+                        <option value="azul">Azul</option>
+                        <option value="verde">Verde</option>
+                        <option value="amarillo">Amarillo</option>
+                        <option value="naranja">Naranja</option>
+                        <option value="marron">Marrón</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="profile-btn">Guardar Perfil</button>
+        </form>
+    </div>
+</div>
+
 <!-- ===== VISTA: DETALLES DEL SERVICE ===== -->
 <div id="serviceDetailsView" class="view">
     <div class="back-header">
@@ -1142,7 +1267,7 @@
         </div>
         <div class="summary-row">
             <span class="summary-label">Mano de obra (talleres locales)</span>
-            <span class="summary-value" id="laborEstimate">$300 - $500</span>
+            <span class="summary-value" id="laborEstimate">$350 - $550</span>
         </div>
         <div class="summary-row">
             <span class="summary-label"><strong>Total estimado</strong></span>
@@ -1156,12 +1281,12 @@
     </div>
 
     <div class="zones-section">
-        <div class="section-title">¿En qué zona querés ver talleres?</div>
+        <div class="section-title">¿En qué provincia querés ver talleres?</div>
         <div class="zones-grid" id="zonesGrid"></div>
     </div>
 
     <div class="workshops-section">
-        <div class="section-title">Talleres en tu zona</div>
+        <div class="section-title">Talleres en tu provincia</div>
         <div id="workshopsContainer"></div>
     </div>
 
@@ -1209,80 +1334,43 @@
             gol: {
                 name: 'Gol',
                 yearRange: { min: 2006, max: 2022 },
-                maintenancePlan: {
-                    15000: { name: 'Service de 15.000 km', description: 'Control general del auto', laborEstimate: '350 - 550', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }, { name: 'Filtro de aceite', brand: 'Bosch', quantity: 1, unit: 'un', price: 150 }, { name: 'Filtro de aire', brand: 'Bosch', quantity: 1, unit: 'un', price: 200 }] } },
-                    30000: { name: 'Service de 30.000 km', description: 'Cambio de fluidos y filtros', laborEstimate: '400 - 600', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }, { name: 'Filtro de aceite', brand: 'Bosch', quantity: 1, unit: 'un', price: 150 }] } },
-                    45000: { name: 'Service de 45.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } },
-                    60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service mayor con cambio de correa de distribución', laborEstimate: '800 - 1.200', parts: { 'Correa y Accesorios': [{ name: 'Correa de distribución', brand: 'SKF/Gates', quantity: 1, unit: 'un', price: 2500 }, { name: 'Tensor de correa', brand: 'SKF', quantity: 1, unit: 'un', price: 650 }], 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }, { name: 'Refrigerante', brand: 'BASF', quantity: 5, unit: 'L', price: 200 }] } },
-                    75000: { name: 'Service de 75.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } },
-                    90000: { name: 'Service de 90.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } },
-                    120000: { name: 'Service de 120.000 km + Cambio de correa', description: 'Service mayor con cambio de correa', laborEstimate: '800 - 1.200', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF/Gates', quantity: 1, unit: 'un', price: 2500 }] } },
-                    180000: { name: 'Service de 180.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } }
-                }
+                maintenancePlan: { 15000: { name: 'Service de 15.000 km', description: 'Control general del auto', laborEstimate: '350 - 550', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }, { name: 'Filtro de aceite', brand: 'Bosch', quantity: 1, unit: 'un', price: 150 }, { name: 'Filtro de aire', brand: 'Bosch', quantity: 1, unit: 'un', price: 200 }] } }, 60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service mayor con cambio de correa de distribución', laborEstimate: '800 - 1.200', parts: { 'Correa y Accesorios': [{ name: 'Correa de distribución', brand: 'SKF/Gates', quantity: 1, unit: 'un', price: 2500 }, { name: 'Tensor de correa', brand: 'SKF', quantity: 1, unit: 'un', price: 650 }], 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }, { name: 'Refrigerante', brand: 'BASF', quantity: 5, unit: 'L', price: 200 }] } } }
             },
             golf: {
                 name: 'Golf',
                 yearRange: { min: 2006, max: 2021 },
                 motorTypes: ['1.6', 'tsi', 'cadena'],
                 maintenancePlan: {
-                    '1.6': {
-                        15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
-                        30000: { name: 'Service de 30.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
-                        60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service con cambio de correa de distribución', laborEstimate: '900 - 1.300', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2800 }] } },
-                        120000: { name: 'Service de 120.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }
-                    },
-                    'tsi': {
-                        15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
-                        30000: { name: 'Service de 30.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
-                        60000: { name: 'Service de 60.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
-                        90000: { name: 'Service de 90.000 km + Cambio de correa', description: 'Service con cambio de correa de distribución', laborEstimate: '950 - 1.400', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2900 }] } },
-                        180000: { name: 'Service de 180.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }
-                    },
-                    'cadena': {
-                        15000: { name: 'Service de 15.000 km', description: 'Control general (sin cambio de correa, usa cadena)', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
-                        30000: { name: 'Service de 30.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
-                        60000: { name: 'Service de 60.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
-                        120000: { name: 'Service de 120.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }
-                    }
+                    '1.6': { 15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }, 60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service con cambio de correa de distribución', laborEstimate: '900 - 1.300', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2800 }] } } },
+                    'tsi': { 15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }, 90000: { name: 'Service de 90.000 km + Cambio de correa', description: 'Service con cambio de correa de distribución', laborEstimate: '950 - 1.400', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2900 }] } } },
+                    'cadena': { 15000: { name: 'Service de 15.000 km', description: 'Control general (sin cambio de correa, usa cadena)', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } } }
                 }
             },
             vento: {
                 name: 'Vento',
                 yearRange: { min: 2006, max: 2022 },
-                maintenancePlan: {
-                    15000: { name: 'Service de 15.000 km', description: 'Control general (sin cambio de correa, usa cadena)', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } },
-                    30000: { name: 'Service de 30.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } },
-                    45000: { name: 'Service de 45.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } },
-                    60000: { name: 'Service de 60.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } },
-                    120000: { name: 'Service de 120.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } }
-                }
+                maintenancePlan: { 15000: { name: 'Service de 15.000 km', description: 'Control general (sin cambio de correa, usa cadena)', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } } }
             },
             suran: {
                 name: 'Suran',
                 yearRange: { min: 2006, max: 2019 },
-                maintenancePlan: {
-                    15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } },
-                    30000: { name: 'Service de 30.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } },
-                    45000: { name: 'Service de 45.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } },
-                    60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service mayor con cambio de correa de distribución', laborEstimate: '900 - 1.300', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2700 }] } },
-                    120000: { name: 'Service de 120.000 km', description: 'Service mayor', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } }
-                }
+                maintenancePlan: { 15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } }, 60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service mayor con cambio de correa de distribución', laborEstimate: '900 - 1.300', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2700 }] } } }
             }
         };
 
-        const zones = ['San Isidro', 'La Boca', 'Flores', 'Caballito', 'Recoleta', 'Belgrano', 'Barracas', 'Boedo', 'Balvanera', 'Moreno', 'Lanús', 'Avellaneda', 'Temperley', 'Ramos Mejía'];
+        const provinces = ['Buenos Aires', 'Córdoba', 'Santa Fe', 'Mendoza', 'Tucumán', 'Entre Ríos', 'Misiones', 'Corrientes', 'San Juan', 'Catamarca', 'La Rioja', 'Santiago del Estero', 'Formosa', 'Chaco', 'Jujuy', 'Salta', 'Neuquén', 'Río Negro', 'Chubut', 'Santa Cruz', 'Tierra del Fuego'];
 
-        const workshopsByZone = {
-            'San Isidro': [{ name: 'Taller VW Expert - San Isidro', rating: 4.8, reviews: 127, phone: '1140123456' }],
-            'La Boca': [{ name: 'Service Gol Master - La Boca', rating: 4.7, reviews: 89, phone: '1143567890' }],
-            'Flores': [{ name: 'Estación de Servicio VW - Flores', rating: 4.5, reviews: 56, phone: '1145678901' }],
-            'Caballito': [{ name: 'Taller Oficial Caballito', rating: 4.7, reviews: 102, phone: '1146789012' }],
-            'Recoleta': [{ name: 'VW Service Recoleta', rating: 4.9, reviews: 134, phone: '1147890123' }]
+        const workshopsByProvince = {
+            'Buenos Aires': [{ name: 'Taller VW Expert - CABA', rating: 4.8, reviews: 127, phone: '1140123456' }, { name: 'Service Premium VW - La Plata', rating: 4.6, reviews: 89, phone: '1140234567' }],
+            'Córdoba': [{ name: 'VW Service Córdoba', rating: 4.7, reviews: 89, phone: '3514567890' }],
+            'Santa Fe': [{ name: 'Service Santa Fe', rating: 4.5, reviews: 56, phone: '3425678901' }],
+            'Mendoza': [{ name: 'Taller VW Mendoza', rating: 4.7, reviews: 102, phone: '2616789012' }],
+            'Tucumán': [{ name: 'Service Tucumán', rating: 4.9, reviews: 134, phone: '3817890123' }]
         };
 
         let selectedModel = null;
         let selectedMotor = null;
-        let selectedZone = 'San Isidro';
+        let selectedZone = 'Buenos Aires';
         let currentServiceKm = 15000;
         let selectedUsage = null;
         let currentModelData = null;
@@ -1306,7 +1394,6 @@
 
                     updateYearSelect(selectedModel);
                     
-                    // Mostrar selector de motor si es Golf
                     if (selectedModel === 'golf') {
                         document.getElementById('motorSelectorGroup').style.display = 'block';
                     } else {
@@ -1331,6 +1418,11 @@
                 e.preventDefault();
                 submitOnboarding();
             });
+
+            document.getElementById('profileForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveProfile();
+            });
         }
 
         function updateYearSelect(model) {
@@ -1351,6 +1443,7 @@
             if (userData) {
                 showDashboard();
                 loadDashboard();
+                loadProfileData();
             }
         }
 
@@ -1390,7 +1483,7 @@
                     motor: selectedMotor,
                     year: year,
                     km: parseInt(km),
-                    monthlyUsage: parseInt(selectedUsage),
+                    annualUsage: parseInt(selectedUsage),
                     registeredDate: new Date().toISOString(),
                     lastKmUpdate: parseInt(km),
                     lastUpdateDate: new Date().toISOString(),
@@ -1401,6 +1494,36 @@
                 localStorage.setItem('golServiceUser', JSON.stringify(userData));
                 showDashboard();
                 loadDashboard();
+            }
+        }
+
+        function saveProfile() {
+            const profileData = {
+                nombre: document.getElementById('profileNombre').value,
+                apellido: document.getElementById('profileApellido').value,
+                telefono: document.getElementById('profileTelefono').value,
+                email: document.getElementById('profileEmail').value,
+                patente: document.getElementById('profilePatente').value,
+                genero: document.getElementById('profileGenero').value,
+                color: document.getElementById('profileColor').value,
+                savedDate: new Date().toISOString()
+            };
+
+            localStorage.setItem('tuAutoAppProfile', JSON.stringify(profileData));
+            alert('✅ Perfil guardado correctamente');
+            showDashboard();
+        }
+
+        function loadProfileData() {
+            const profileData = JSON.parse(localStorage.getItem('tuAutoAppProfile'));
+            if (profileData) {
+                document.getElementById('profileNombre').value = profileData.nombre || '';
+                document.getElementById('profileApellido').value = profileData.apellido || '';
+                document.getElementById('profileTelefono').value = profileData.telefono || '';
+                document.getElementById('profileEmail').value = profileData.email || '';
+                document.getElementById('profilePatente').value = profileData.patente || '';
+                document.getElementById('profileGenero').value = profileData.genero || '';
+                document.getElementById('profileColor').value = profileData.color || '';
             }
         }
 
@@ -1415,6 +1538,11 @@
         function showDashboard() {
             showView('dashboardView');
             loadDashboard();
+        }
+
+        function showProfile() {
+            loadProfileData();
+            showView('profileView');
         }
 
         function showServiceDetails() {
@@ -1446,38 +1574,43 @@
         function calculateNextService(userData) {
             const currentKm = userData.km;
             
-            // Obtener plan de mantenimiento según modelo y motor (si aplica)
             let plan = currentModelData.maintenancePlan;
             if (userData.motor && currentModelData.maintenancePlan[userData.motor]) {
                 plan = currentModelData.maintenancePlan[userData.motor];
             }
 
-            const maintenancePlan = Object.keys(plan)
-                .map(k => ({ km: parseInt(k) }))
-                .sort((a, b) => a.km - b.km);
-
-            let nextService = maintenancePlan.find(s => s.km > currentKm);
-            
-            if (!nextService) {
-                nextService = maintenancePlan[maintenancePlan.length - 1];
+            // Generar servicios dinámicamente cada 15.000 km
+            const serviceIntervals = [];
+            for (let km = 15000; km <= 300000; km += 15000) {
+                serviceIntervals.push(km);
             }
 
-            currentServiceKm = nextService.km;
-            const serviceInfo = plan[nextService.km];
-            const kmRemaining = nextService.km - currentKm;
-            const dailyKm = userData.monthlyUsage / 30;
+            let nextService = serviceIntervals.find(km => km > currentKm);
+            if (!nextService) {
+                nextService = serviceIntervals[serviceIntervals.length - 1];
+            }
+
+            currentServiceKm = nextService;
+            
+            // Obtener info del service del plan, o crear genérica
+            let serviceInfo = plan[nextService];
+            if (!serviceInfo) {
+                serviceInfo = { name: `Service de ${nextService.toLocaleString('es-AR')} km`, description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } };
+            }
+
+            const kmRemaining = nextService - currentKm;
+            const dailyKm = (userData.annualUsage / 365);
             const daysRemaining = Math.ceil(kmRemaining / dailyKm);
             const monthsRemaining = Math.ceil(daysRemaining / 30);
 
             document.getElementById('nextServiceName').textContent = serviceInfo.name;
-            document.getElementById('nextServiceKmDisplay').textContent = nextService.km.toLocaleString('es-AR');
+            document.getElementById('nextServiceKmDisplay').textContent = nextService.toLocaleString('es-AR');
             document.getElementById('kmRemaining').textContent = kmRemaining.toLocaleString('es-AR');
             document.getElementById('monthsRemaining').textContent = monthsRemaining;
 
-            const previousService = maintenancePlan.filter(s => s.km < currentKm).pop();
-            const previousKm = previousService ? previousService.km : 0;
-            const intervalKm = nextService.km - previousKm;
-            const progressKm = currentKm - previousKm;
+            const previousService = serviceIntervals.filter(km => km < currentKm).pop() || 0;
+            const intervalKm = nextService - previousService;
+            const progressKm = currentKm - previousService;
             const progressPercent = Math.round((progressKm / intervalKm) * 100);
 
             document.getElementById('progressPercent').textContent = `${progressPercent}%`;
@@ -1511,19 +1644,21 @@
         }
 
         function toggleKmUpdate() {
-            document.getElementById('kmUpdateSection').style.display = 
-                document.getElementById('kmUpdateSection').style.display === 'none' ? 'block' : 'none';
+            const section = document.getElementById('kmUpdateSection');
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                setTimeout(() => section.scrollIntoView({ behavior: 'smooth' }), 100);
+            } else {
+                section.style.display = 'none';
+            }
         }
 
         function updateEstimatedKmInfo(userData) {
-            const dailyKm = (userData.monthlyUsage / 30).toFixed(1);
-            const today = new Date();
-            const nextMonthDate = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
-            const daysUntilNextMonth = Math.ceil((nextMonthDate - today) / (1000 * 60 * 60 * 24));
-            const estimatedKmNextMonth = userData.km + Math.round(userData.monthlyUsage);
+            const dailyKm = (userData.annualUsage / 365).toFixed(1);
+            const estimatedKmNextMonth = userData.km + Math.round(userData.annualUsage / 12);
 
             document.getElementById('estimatedKmInfo').textContent = 
-                `Estimamos que en ${daysUntilNextMonth} días tendrás aprox. ${estimatedKmNextMonth.toLocaleString('es-AR')} km`;
+                `En ~30 días (con uso de ${dailyKm} km/día) tendrás aprox. ${estimatedKmNextMonth.toLocaleString('es-AR')} km`;
             
             document.getElementById('kmUpdateInput').value = estimatedKmNextMonth;
         }
@@ -1559,7 +1694,10 @@
                 plan = currentModelData.maintenancePlan[userData.motor];
             }
 
-            const service = plan[currentServiceKm];
+            let service = plan[currentServiceKm];
+            if (!service) {
+                service = { name: `Service de ${currentServiceKm.toLocaleString('es-AR')} km`, description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } };
+            }
 
             document.getElementById('serviceKm').textContent = `${currentServiceKm.toLocaleString('es-AR')} km`;
             document.getElementById('serviceDesc').textContent = service.description;
@@ -1622,12 +1760,12 @@
             const container = document.getElementById('zonesGrid');
             container.innerHTML = '';
 
-            zones.forEach(zone => {
+            provinces.forEach(province => {
                 const btn = document.createElement('button');
                 btn.className = 'zone-btn';
-                if (zone === selectedZone) btn.classList.add('active');
-                btn.textContent = zone;
-                btn.onclick = () => selectZone(zone);
+                if (province === selectedZone) btn.classList.add('active');
+                btn.textContent = province;
+                btn.onclick = () => selectZone(province);
                 container.appendChild(btn);
             });
         }
@@ -1642,10 +1780,10 @@
             const container = document.getElementById('workshopsContainer');
             container.innerHTML = '';
 
-            const workshops = workshopsByZone[selectedZone] || [];
+            const workshops = workshopsByProvince[selectedZone] || [];
 
             if (workshops.length === 0) {
-                container.innerHTML = '<p style="color: #999; font-size: 12px;">No hay talleres en esta zona aún</p>';
+                container.innerHTML = '<p style="color: #999; font-size: 12px;">No hay talleres en esta provincia aún. Pronto agregaremos más.</p>';
                 return;
             }
 
@@ -1773,7 +1911,6 @@
             container.innerHTML = timelineHTML;
         }
 
-        // Selector de motor para Golf
         document.getElementById('motorSelect')?.addEventListener('change', (e) => {
             selectedMotor = e.target.value;
             document.getElementById('motorError').style.display = 'none';
