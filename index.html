@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GolService AR - MVP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* ===== GENERAL ===== */
+        .view {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* ===== ONBOARDING ===== */
+        #onboardingView {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .onboarding-container {
+            background: white;
+            border-radius: 16px;
+            padding: 32px 24px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .onboarding-container h1 {
+            color: #1a1a1a;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            color: #1a1a1a;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .model-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .model-btn {
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .model-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .model-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .model-btn-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .usage-buttons {
+            margin-bottom: 24px;
+        }
+
+        .usage-label {
+            display: block;
+            color: #1a1a1a;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .usage-btn {
+            padding: 16px 12px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        .usage-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .usage-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #555;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        /* ===== DASHBOARD ===== */
+        #dashboardView {
+            padding: 16px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-top: 8px;
+        }
+
+        .header-left h1 {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .header-left p {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .menu-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .km-reminder {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #856404;
+            display: none;
+        }
+
+        .km-reminder.active {
+            display: block;
+        }
+
+        .km-reminder button {
+            background: #ffc107;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 32px 24px;
+            color: white;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .status-badge.ok {
+            background: rgba(76, 175, 80, 0.3);
+        }
+
+        .status-badge.warning {
+            background: rgba(255, 152, 0, 0.3);
+        }
+
+        .status-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .status-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .progress-section {
+            margin-top: 24px;
+        }
+
+        .progress-label {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            opacity: 0.9;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .detail-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            opacity: 0.8;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .action-btn {
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            color: #1a1a1a;
+            font-weight: 600;
+            font-size: 13px;
+            border: none;
+        }
+
+        .action-btn:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+            transform: translateY(-2px);
+        }
+
+        .action-btn-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .next-action-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-title {
+            font-size: 14px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .service-name {
+            font-size: 20px;
+            color: #1a1a1a;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .service-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .info-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 18px;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .info-unit {
+            font-size: 12px;
+            color: #ccc;
+            font-weight: 400;
+        }
+
+        .action-link-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: all 0.3s;
+        }
+
+        .action-link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* ===== DETALLES DEL SERVICE ===== */
+        #serviceDetailsView {
+            padding: 16px;
+        }
+
+        .back-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-top: 8px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .back-header h1 {
+            font-size: 24px;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .service-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 24px;
+        }
+
+        .service-km {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .service-desc {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .parts-list {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .part-item {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .part-item:last-child {
+            border-bottom: none;
+        }
+
+        .part-info {
+            flex: 1;
+        }
+
+        .part-name {
+            font-size: 14px;
+            color: #1a1a1a;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .part-brand {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .part-price-section {
+            text-align: right;
+        }
+
+        .part-price {
+            font-size: 16px;
+            color: #1a1a1a;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .buy-btn {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            margin-left: 12px;
+        }
+
+        .buy-btn:hover {
+            background: #764ba2;
+            transform: translateY(-1px);
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: #f0f4ff;
+            color: #667eea;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
+            padding-top: 12px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .summary-label {
+            color: #999;
+        }
+
+        .summary-value {
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .summary-value.total {
+            font-size: 18px;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .zones-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+        }
+
+        .zones-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .zone-btn {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        .zone-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .zone-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .workshops-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+        }
+
+        .workshop-item {
+            padding: 12px;
+            background: #f5f7fa;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .workshop-item:hover {
+            background: #eef0f8;
+            transform: translateY(-2px);
+        }
+
+        .workshop-name {
+            font-size: 14px;
+            color: #1a1a1a;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .workshop-info {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+
+        .workshop-btn {
+            padding: 8px 12px;
+            background: #25d366;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .workshop-btn:hover {
+            background: #1ea952;
+            transform: translateY(-1px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 24px;
+            border-radius: 16px 16px 0 0;
+            width: 100%;
+            max-width: 500px;
+            animation: slideUp 0.3s;
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn.confirm {
+            background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+            color: white;
+        }
+
+        .modal-btn.cancel {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        #historialView {
+            padding: 16px;
+        }
+
+        .timeline {
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+
+        .timeline-item {
+            padding-left: 64px;
+            padding-bottom: 24px;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '✓';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .timeline-content {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .timeline-title {
+            font-size: 16px;
+            color: #1a1a1a;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .timeline-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .timeline-detail {
+            font-size: 12px;
+        }
+
+        .timeline-detail-label {
+            color: #999;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .timeline-detail-value {
+            color: #1a1a1a;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 16px;
+            color: #1a1a1a;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .zones-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .model-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== VISTA: ONBOARDING ===== -->
+<div id="onboardingView" class="view active">
+    <div class="onboarding-container">
+        <div class="logo-section">
+            <div class="logo-icon">🚗</div>
+            <h1>GolService AR</h1>
+            <p class="subtitle">Mantén tu Volkswagen en perfecto estado</p>
+        </div>
+
+        <form id="registroForm">
+            <!-- SELECTOR DE MODELO -->
+            <div class="form-group">
+                <label>¿Qué modelo VW tenés?</label>
+                <div class="model-selector">
+                    <button type="button" class="model-btn" data-model="gol">
+                        <div class="model-btn-icon">🚗</div>
+                        <div>Gol</div>
+                    </button>
+                    <button type="button" class="model-btn" data-model="golf">
+                        <div class="model-btn-icon">🚗</div>
+                        <div>Golf</div>
+                    </button>
+                    <button type="button" class="model-btn" data-model="vento">
+                        <div class="model-btn-icon">🚗</div>
+                        <div>Vento</div>
+                    </button>
+                    <button type="button" class="model-btn" data-model="suran">
+                        <div class="model-btn-icon">🚙</div>
+                        <div>Suran</div>
+                    </button>
+                </div>
+                <div class="error-message" id="modelError">Por favor, selecciona un modelo</div>
+            </div>
+
+            <!-- AÑO DEL AUTO -->
+            <div class="form-group">
+                <label for="yearSelect">¿Qué año es tu auto?</label>
+                <select id="yearSelect" required>
+                    <option value="">Selecciona el año</option>
+                </select>
+                <div class="error-message" id="yearError">Por favor, selecciona un año</div>
+            </div>
+
+            <!-- KM ACTUALES -->
+            <div class="form-group">
+                <label for="kmInput">¿Cuántos kilómetros tiene ahora?</label>
+                <input type="number" id="kmInput" placeholder="Ej: 45000" min="0" max="300000" required>
+                <div class="error-message" id="kmError">Ingresa un número entre 0 y 300.000 km</div>
+            </div>
+
+            <!-- USO MENSUAL -->
+            <div class="usage-buttons">
+                <span class="usage-label">Estima tu uso mensual:</span>
+                <div class="buttons-grid">
+                    <button type="button" class="usage-btn" data-usage="500">
+                        <div>🚗</div>
+                        <div>500 km</div>
+                    </button>
+                    <button type="button" class="usage-btn" data-usage="1000">
+                        <div>🚗</div>
+                        <div>1.000 km</div>
+                    </button>
+                    <button type="button" class="usage-btn" data-usage="1500">
+                        <div>🚗</div>
+                        <div>1.500 km</div>
+                    </button>
+                    <button type="button" class="usage-btn" data-usage="2000">
+                        <div>🚗</div>
+                        <div>2.000+ km</div>
+                    </button>
+                </div>
+                <div class="error-message" id="usageError">Por favor, selecciona un uso</div>
+            </div>
+
+            <button type="submit" class="submit-btn">Ingresar</button>
+
+            <div class="info-box">
+                💡 Usamos esta información para estimar tu próximo mantenimiento con precisión.
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ===== VISTA: DASHBOARD ===== -->
+<div id="dashboardView" class="view">
+    <div class="header">
+        <div class="header-left">
+            <h1 id="carTitle">Gol 2020</h1>
+            <p id="carKm">45.000 km</p>
+        </div>
+        <button class="menu-btn" onclick="showHistorial()">📋</button>
+    </div>
+
+    <div class="km-reminder" id="kmReminder">
+        <strong>📅 Recordatorio mensual:</strong> Hace un mes que no actualizas tu km. ¿Cuántos tienes ahora?
+        <button onclick="toggleKmUpdate()">Actualizar</button>
+    </div>
+
+    <div class="status-card">
+        <div class="status-badge ok" id="statusBadge">✓ Estás al día</div>
+        
+        <div class="status-title" id="statusTitle">Próximo mantenimiento</div>
+        <div class="status-subtitle" id="statusSubtitle">Te quedan 15.000 km o 8 meses aproximadamente</div>
+
+        <div class="progress-section">
+            <div class="progress-label">
+                <span>Progreso hacia próximo service</span>
+                <span id="progressPercent">75%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 75%"></div>
+            </div>
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-item">
+                <div class="detail-label">Km Actuales</div>
+                <div class="detail-value" id="currentKmDisplay">45.000</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Próximo service</div>
+                <div class="detail-value" id="nextServiceKmDisplay">60.000</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="action-btn" onclick="toggleKmUpdate()">
+            <div class="action-btn-icon">📊</div>
+            <div class="action-btn-text">Actualizar KM</div>
+        </button>
+        <button class="action-btn" onclick="showServiceDetails()">
+            <div class="action-btn-icon">🔧</div>
+            <div class="action-btn-text">Detalles</div>
+        </button>
+        <button class="action-btn" onclick="alert('Próximamente: Comprar repuestos')">
+            <div class="action-btn-icon">🛒</div>
+            <div class="action-btn-text">Repuestos</div>
+        </button>
+        <button class="action-btn" onclick="showServiceDetails()">
+            <div class="action-btn-icon">🏢</div>
+            <div class="action-btn-text">Talleres</div>
+        </button>
+    </div>
+
+    <div class="next-action-card">
+        <div class="card-title">Próxima acción recomendada</div>
+        <div class="service-name" id="nextServiceName">Service a 60.000 km</div>
+        
+        <div class="service-info">
+            <div class="info-block">
+                <div class="info-label">Faltan</div>
+                <div class="info-value">
+                    <span id="kmRemaining">15.000</span>
+                    <div class="info-unit">kilómetros</div>
+                </div>
+            </div>
+            <div class="info-block">
+                <div class="info-label">Estimado en</div>
+                <div class="info-value">
+                    <span id="monthsRemaining">8</span>
+                    <div class="info-unit">meses aprox.</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="action-link-btn" onclick="showServiceDetails()">Ver detalles completos →</button>
+    </div>
+
+    <div id="kmUpdateSection" style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); display: none;">
+        <h3 style="font-size: 16px; color: #1a1a1a; margin-bottom: 16px; font-weight: 700;">Actualiza tu kilometraje</h3>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <input type="number" id="kmUpdateInput" placeholder="Ej: 46000" min="0" max="300000" style="flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; font-weight: 600;">
+            <button onclick="updateKm()" style="padding: 12px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; transition: all 0.3s;">Guardar</button>
+        </div>
+        <div id="estimatedKmInfo" style="background: #f5f7ff; padding: 12px; border-radius: 8px; font-size: 12px; color: #666; text-align: center;"></div>
+    </div>
+</div>
+
+<!-- ===== VISTA: DETALLES DEL SERVICE ===== -->
+<div id="serviceDetailsView" class="view">
+    <div class="back-header">
+        <button class="back-btn" onclick="showDashboard()">←</button>
+        <h1>Detalles del Service</h1>
+    </div>
+
+    <div class="service-banner">
+        <div class="service-km" id="serviceKm">60.000 km</div>
+        <div class="service-desc" id="serviceDesc">Service mayor con cambio de correa de distribución</div>
+    </div>
+
+    <div class="summary-card">
+        <div class="category-tag">PRESUPUESTO ESTIMADO</div>
+        <div class="summary-row">
+            <span class="summary-label">Repuestos</span>
+            <span class="summary-value" id="partsTotal">$0</span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">Mano de obra (talleres locales)</span>
+            <span class="summary-value" id="laborEstimate">$800 - $1.200</span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label"><strong>Total estimado</strong></span>
+            <span class="summary-value total" id="totalEstimate">$0</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Repuestos necesarios</div>
+        <div id="partsCategoriesContainer"></div>
+    </div>
+
+    <div class="zones-section">
+        <div class="section-title">¿En qué zona querés ver talleres?</div>
+        <div class="zones-grid" id="zonesGrid"></div>
+    </div>
+
+    <div class="workshops-section">
+        <div class="section-title">Talleres en tu zona</div>
+        <div id="workshopsContainer"></div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="action-btn" style="background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); color: white;" onclick="openDoneModal()">✓ Ya lo hice</button>
+        <button class="action-btn" style="background: white; color: #667eea; border: 2px solid #667eea;" onclick="showDashboard()">Volver</button>
+    </div>
+</div>
+
+<!-- ===== VISTA: HISTORIAL ===== -->
+<div id="historialView" class="view">
+    <div class="back-header">
+        <button class="back-btn" onclick="showDashboard()">←</button>
+        <h1>Historial de Servicios</h1>
+    </div>
+
+    <div class="info-box" style="margin-bottom: 24px;">
+        💡 <strong>Este historial es tu activo más valioso:</strong> Cuando vendas o transfers tu auto, podrás descargar un reporte completo con todos los servicios realizados. ¡Aumenta el valor de tu vehículo!
+    </div>
+
+    <div id="historyContainer"></div>
+</div>
+
+<!-- ===== MODAL: CONFIRMAR SERVICE REALIZADO ===== -->
+<div class="modal" id="doneModal">
+    <div class="modal-content">
+        <div class="modal-header">¿Completaste el service?</div>
+        <p style="font-size: 14px; color: #666; margin-bottom: 16px;">
+            Confirma que ya realizaste este service. Esto actualizará tu próximo mantenimiento.
+        </p>
+        <input type="date" class="modal-input" id="serviceDate">
+        <p style="font-size: 12px; color: #999; margin-bottom: 16px;">
+            Fecha en que se realizó el service
+        </p>
+        <div class="modal-buttons">
+            <button class="modal-btn confirm" onclick="confirmServiceDone()">Confirmar</button>
+            <button class="modal-btn cancel" onclick="closeDoneModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+        // ===== BASE DE DATOS DE MODELOS Y SERVICIOS =====
+        const modelsDatabase = {
+            gol: {
+                name: 'Gol',
+                yearRange: { min: 2006, max: 2022 },
+                maintenancePlan: {
+                    10000: {
+                        name: 'Service de 10.000 km',
+                        description: 'Service básico y control general',
+                        laborEstimate: '300 - 500',
+                        parts: {
+                            'Fluidos y Filtros': [
+                                { name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 },
+                                { name: 'Filtro de aceite', brand: 'Bosch', quantity: 1, unit: 'un', price: 150 },
+                                { name: 'Filtro de aire', brand: 'Bosch', quantity: 1, unit: 'un', price: 200 }
+                            ]
+                        }
+                    },
+                    40000: {
+                        name: 'Service de 40.000 km',
+                        description: 'Service mayor con cambio de algunos fluidos',
+                        laborEstimate: '500 - 800',
+                        parts: {
+                            'Fluidos y Filtros': [
+                                { name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 },
+                                { name: 'Filtro de aceite', brand: 'Bosch', quantity: 1, unit: 'un', price: 150 },
+                                { name: 'Filtro de aire', brand: 'Bosch', quantity: 1, unit: 'un', price: 200 }
+                            ]
+                        }
+                    },
+                    60000: {
+                        name: 'Service de 60.000 km',
+                        description: 'Service mayor con cambio de correa de distribución',
+                        laborEstimate: '800 - 1.200',
+                        parts: {
+                            'Correa y Accesorios': [
+                                { name: 'Correa de distribución', brand: 'SKF/Gates', quantity: 1, unit: 'un', price: 2500 },
+                                { name: 'Tensor de correa', brand: 'SKF', quantity: 1, unit: 'un', price: 650 }
+                            ],
+                            'Fluidos': [
+                                { name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 },
+                                { name: 'Refrigerante', brand: 'BASF', quantity: 5, unit: 'L', price: 200 }
+                            ]
+                        }
+                    },
+                    100000: { name: 'Service de 100.000 km', description: 'Service mayor', laborEstimate: '600 - 900', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } },
+                    140000: { name: 'Service de 140.000 km', description: 'Service mayor con correa de distribución', laborEstimate: '800 - 1.200', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF/Gates', quantity: 1, unit: 'un', price: 2500 }] } },
+                    180000: { name: 'Service de 180.000 km', description: 'Service mayor', laborEstimate: '600 - 900', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } }
+                }
+            },
+            golf: {
+                name: 'Golf',
+                yearRange: { min: 2007, max: 2022 },
+                maintenancePlan: {
+                    15000: { name: 'Service de 15.000 km', description: 'Service básico', laborEstimate: '400 - 600', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
+                    30000: { name: 'Service de 30.000 km', description: 'Service mayor', laborEstimate: '600 - 900', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } },
+                    60000: { name: 'Service de 60.000 km', description: 'Service con cambio de correa', laborEstimate: '900 - 1.300', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2800 }] } },
+                    120000: { name: 'Service de 120.000 km', description: 'Service mayor', laborEstimate: '700 - 1.000', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }
+                }
+            },
+            vento: {
+                name: 'Vento',
+                yearRange: { min: 2009, max: 2022 },
+                maintenancePlan: {
+                    10000: { name: 'Service de 10.000 km', description: 'Service básico', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } },
+                    40000: { name: 'Service de 40.000 km', description: 'Service mayor', laborEstimate: '550 - 800', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } },
+                    80000: { name: 'Service de 80.000 km', description: 'Service con correa', laborEstimate: '850 - 1.200', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'Gates', quantity: 1, unit: 'un', price: 2600 }] } },
+                    160000: { name: 'Service de 160.000 km', description: 'Service mayor', laborEstimate: '700 - 1.000', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } }
+                }
+            },
+            suran: {
+                name: 'Suran',
+                yearRange: { min: 2010, max: 2022 },
+                maintenancePlan: {
+                    10000: { name: 'Service de 10.000 km', description: 'Service básico', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } },
+                    40000: { name: 'Service de 40.000 km', description: 'Service mayor', laborEstimate: '600 - 850', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } },
+                    80000: { name: 'Service de 80.000 km', description: 'Service con correa', laborEstimate: '900 - 1.300', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2700 }] } }
+                }
+            }
+        };
+
+        const zones = [
+            'San Isidro', 'La Boca', 'Flores', 'Caballito', 'Recoleta',
+            'Belgrano', 'Barracas', 'Boedo', 'Balvanera', 'Moreno',
+            'Lanús', 'Avellaneda', 'Temperley', 'Ramos Mejía'
+        ];
+
+        const workshopsByZone = {
+            'San Isidro': [
+                { name: 'Taller VW Expert - San Isidro', rating: 4.8, reviews: 127, phone: '1140123456' }
+            ],
+            'La Boca': [
+                { name: 'Service Gol Master - La Boca', rating: 4.7, reviews: 89, phone: '1143567890' }
+            ],
+            'Flores': [
+                { name: 'Estación de Servicio VW - Flores', rating: 4.5, reviews: 56, phone: '1145678901' }
+            ],
+            'Caballito': [
+                { name: 'Taller Oficial Caballito', rating: 4.7, reviews: 102, phone: '1146789012' }
+            ],
+            'Recoleta': [
+                { name: 'VW Service Recoleta', rating: 4.9, reviews: 134, phone: '1147890123' }
+            ]
+        };
+
+        // ===== VARIABLES GLOBALES =====
+        let selectedModel = null;
+        let selectedZone = 'San Isidro';
+        let currentServiceKm = 60000;
+        let selectedUsage = null;
+        let currentModelData = null;
+
+        // ===== INICIALIZACIÓN =====
+        window.addEventListener('DOMContentLoaded', function() {
+            initOnboarding();
+            checkUserData();
+        });
+
+        function initOnboarding() {
+            const yearSelect = document.getElementById('yearSelect');
+            const modelBtns = document.querySelectorAll('.model-btn');
+
+            modelBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    modelBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedModel = btn.dataset.model;
+                    document.getElementById('modelError').style.display = 'none';
+
+                    // Actualizar rango de años
+                    updateYearSelect(selectedModel);
+                });
+            });
+
+            const usageButtons = document.querySelectorAll('.usage-btn');
+            usageButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    usageButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedUsage = btn.dataset.usage;
+                    document.getElementById('usageError').style.display = 'none';
+                });
+            });
+
+            document.getElementById('registroForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitOnboarding();
+            });
+        }
+
+        function updateYearSelect(model) {
+            const yearSelect = document.getElementById('yearSelect');
+            yearSelect.innerHTML = '<option value="">Selecciona el año</option>';
+
+            const modelInfo = modelsDatabase[model];
+            for (let year = modelInfo.yearRange.max; year >= modelInfo.yearRange.min; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            }
+        }
+
+        function checkUserData() {
+            const userData = JSON.parse(localStorage.getItem('golServiceUser'));
+            if (userData) {
+                showDashboard();
+                loadDashboard();
+            }
+        }
+
+        function submitOnboarding() {
+            const year = document.getElementById('yearSelect').value;
+            const km = document.getElementById('kmInput').value;
+            let isValid = true;
+
+            if (!selectedModel) {
+                document.getElementById('modelError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!year) {
+                document.getElementById('yearError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!km || km < 0 || km > 300000) {
+                document.getElementById('kmError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!selectedUsage) {
+                document.getElementById('usageError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                const userData = {
+                    model: selectedModel,
+                    year: year,
+                    km: parseInt(km),
+                    monthlyUsage: parseInt(selectedUsage),
+                    registeredDate: new Date().toISOString(),
+                    lastKmUpdate: parseInt(km),
+                    lastUpdateDate: new Date().toISOString(),
+                    lastServiceKm: 0,
+                    lastServiceDate: null
+                };
+
+                localStorage.setItem('golServiceUser', JSON.stringify(userData));
+                showDashboard();
+                loadDashboard();
+            }
+        }
+
+        // ===== NAVEGACIÓN =====
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById(viewId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function showDashboard() {
+            showView('dashboardView');
+            loadDashboard();
+        }
+
+        function showServiceDetails() {
+            showView('serviceDetailsView');
+            loadServiceDetails();
+        }
+
+        function showHistorial() {
+            showView('historialView');
+            loadHistorial();
+        }
+
+        // ===== DASHBOARD =====
+        function loadDashboard() {
+            const userData = JSON.parse(localStorage.getItem('golServiceUser'));
+            if (!userData) return;
+
+            currentModelData = modelsDatabase[userData.model];
+            const modelName = currentModelData.name;
+
+            document.getElementById('carTitle').textContent = `${modelName} ${userData.year}`;
+            document.getElementById('carKm').textContent = `${userData.km.toLocaleString('es-AR')} km`;
+            document.getElementById('currentKmDisplay').textContent = userData.km.toLocaleString('es-AR');
+
+            calculateNextService(userData);
+            checkKmReminder(userData);
+            updateEstimatedKmInfo(userData);
+        }
+
+        function calculateNextService(userData) {
+            const currentKm = userData.km;
+            const maintenancePlan = Object.keys(currentModelData.maintenancePlan)
+                .map(k => ({ km: parseInt(k) }))
+                .sort((a, b) => a.km - b.km);
+
+            let nextService = maintenancePlan.find(s => s.km > currentKm);
+            
+            if (!nextService) {
+                nextService = maintenancePlan[maintenancePlan.length - 1];
+            }
+
+            currentServiceKm = nextService.km;
+            const serviceInfo = currentModelData.maintenancePlan[nextService.km];
+            const kmRemaining = nextService.km - currentKm;
+            const dailyKm = userData.monthlyUsage / 30;
+            const daysRemaining = Math.ceil(kmRemaining / dailyKm);
+            const monthsRemaining = Math.ceil(daysRemaining / 30);
+
+            document.getElementById('nextServiceName').textContent = serviceInfo.name;
+            document.getElementById('nextServiceKmDisplay').textContent = nextService.km.toLocaleString('es-AR');
+            document.getElementById('kmRemaining').textContent = kmRemaining.toLocaleString('es-AR');
+            document.getElementById('monthsRemaining').textContent = monthsRemaining;
+
+            const previousService = maintenancePlan.filter(s => s.km < currentKm).pop();
+            const previousKm = previousService ? previousService.km : 0;
+            const intervalKm = nextService.km - previousKm;
+            const progressKm = currentKm - previousKm;
+            const progressPercent = Math.round((progressKm / intervalKm) * 100);
+
+            document.getElementById('progressPercent').textContent = `${progressPercent}%`;
+            document.getElementById('progressFill').style.width = `${progressPercent}%`;
+
+            let status = '✓ Estás al día';
+            let badgeClass = 'ok';
+
+            if (progressPercent > 90) {
+                status = '⚠️ Servicio próximo';
+                badgeClass = 'warning';
+            }
+
+            document.getElementById('statusBadge').textContent = status;
+            document.getElementById('statusBadge').className = `status-badge ${badgeClass}`;
+            document.getElementById('statusTitle').textContent = serviceInfo.name;
+            document.getElementById('statusSubtitle').textContent = 
+                `Te quedan ${kmRemaining.toLocaleString('es-AR')} km o ${monthsRemaining} meses aproximadamente`;
+        }
+
+        function checkKmReminder(userData) {
+            const lastUpdateDate = new Date(userData.lastUpdateDate);
+            const today = new Date();
+            const daysSinceUpdate = Math.floor((today - lastUpdateDate) / (1000 * 60 * 60 * 24));
+
+            if (daysSinceUpdate >= 30) {
+                document.getElementById('kmReminder').classList.add('active');
+            } else {
+                document.getElementById('kmReminder').classList.remove('active');
+            }
+        }
+
+        function toggleKmUpdate() {
+            document.getElementById('kmUpdateSection').style.display = 
+                document.getElementById('kmUpdateSection').style.display === 'none' ? 'block' : 'none';
+        }
+
+        function updateEstimatedKmInfo(userData) {
+            const dailyKm = (userData.monthlyUsage / 30).toFixed(1);
+            const today = new Date();
+            const nextMonthDate = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+            const daysUntilNextMonth = Math.ceil((nextMonthDate - today) / (1000 * 60 * 60 * 24));
+            const estimatedKmNextMonth = userData.km + Math.round(userData.monthlyUsage);
+
+            document.getElementById('estimatedKmInfo').textContent = 
+                `Estimamos que en ${daysUntilNextMonth} días tendrás aprox. ${estimatedKmNextMonth.toLocaleString('es-AR')} km`;
+            
+            document.getElementById('kmUpdateInput').value = estimatedKmNextMonth;
+        }
+
+        function updateKm() {
+            const newKm = parseInt(document.getElementById('kmUpdateInput').value);
+            const userData = JSON.parse(localStorage.getItem('golServiceUser'));
+
+            if (!newKm || newKm < userData.km) {
+                alert('Ingresa un kilometraje válido (mayor al actual)');
+                return;
+            }
+
+            userData.km = newKm;
+            userData.lastKmUpdate = newKm;
+            userData.lastUpdateDate = new Date().toISOString();
+
+            localStorage.setItem('golServiceUser', JSON.stringify(userData));
+
+            document.getElementById('carKm').textContent = `${newKm.toLocaleString('es-AR')} km`;
+            calculateNextService(userData);
+            updateEstimatedKmInfo(userData);
+            document.getElementById('kmUpdateSection').style.display = 'none';
+            
+            alert('✅ Kilometraje actualizado');
+        }
+
+        // ===== DETALLES DEL SERVICE =====
+        function loadServiceDetails() {
+            const userData = JSON.parse(localStorage.getItem('golServiceUser'));
+            const service = currentModelData.maintenancePlan[currentServiceKm];
+
+            document.getElementById('serviceKm').textContent = `${currentServiceKm.toLocaleString('es-AR')} km`;
+            document.getElementById('serviceDesc').textContent = service.description;
+            document.getElementById('laborEstimate').textContent = `$${service.laborEstimate}`;
+
+            renderParts(service.parts);
+            renderZones();
+            renderWorkshops();
+
+            localStorage.setItem('currentService', JSON.stringify({ km: currentServiceKm, name: service.name }));
+        }
+
+        function renderParts(partsData) {
+            const container = document.getElementById('partsCategoriesContainer');
+            container.innerHTML = '';
+            let totalPrice = 0;
+
+            Object.entries(partsData).forEach(([category, parts]) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'parts-list';
+                categoryDiv.style.marginBottom = '12px';
+
+                let categoryHTML = '';
+                parts.forEach(part => {
+                    const totalPartPrice = part.price * part.quantity;
+                    totalPrice += totalPartPrice;
+
+                    categoryHTML += `
+                        <div class="part-item">
+                            <div class="part-info">
+                                <div class="part-name">${part.name}</div>
+                                <div class="part-brand">${part.brand} (${part.quantity} ${part.unit})</div>
+                            </div>
+                            <div class="part-price-section">
+                                <div class="part-price">$${totalPartPrice.toLocaleString('es-AR')}</div>
+                                <button class="buy-btn" onclick="goToMercadoLibre('${part.name}')">Comprar</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                categoryDiv.innerHTML = `
+                    <div style="padding: 16px; background: #f5f7fa; border-bottom: 1px solid #e0e0e0;">
+                        <div class="category-tag">${category}</div>
+                    </div>
+                    ${categoryHTML}
+                `;
+
+                container.appendChild(categoryDiv);
+            });
+
+            const laborMin = 300;
+            const totalWithLabor = totalPrice + laborMin;
+
+            document.getElementById('partsTotal').textContent = `$${totalPrice.toLocaleString('es-AR')}`;
+            document.getElementById('totalEstimate').textContent = `$${Math.round(totalWithLabor).toLocaleString('es-AR')}`;
+        }
+
+        function renderZones() {
+            const container = document.getElementById('zonesGrid');
+            container.innerHTML = '';
+
+            zones.forEach(zone => {
+                const btn = document.createElement('button');
+                btn.className = 'zone-btn';
+                if (zone === selectedZone) btn.classList.add('active');
+                btn.textContent = zone;
+                btn.onclick = () => selectZone(zone);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectZone(zone) {
+            selectedZone = zone;
+            renderZones();
+            renderWorkshops();
+        }
+
+        function renderWorkshops() {
+            const container = document.getElementById('workshopsContainer');
+            container.innerHTML = '';
+
+            const workshops = workshopsByZone[selectedZone] || [];
+
+            if (workshops.length === 0) {
+                container.innerHTML = '<p style="color: #999; font-size: 12px;">No hay talleres en esta zona aún</p>';
+                return;
+            }
+
+            workshops.forEach(workshop => {
+                const stars = '⭐'.repeat(Math.floor(workshop.rating));
+                const workshopDiv = document.createElement('div');
+                workshopDiv.className = 'workshop-item';
+
+                workshopDiv.innerHTML = `
+                    <div class="workshop-name">${workshop.name}</div>
+                    <div class="workshop-info">${stars} ${workshop.rating} (${workshop.reviews} reseñas)</div>
+                    <button class="workshop-btn" onclick="sendWhatsAppMessage('${workshop.phone}', '${workshop.name}')">
+                        📞 Consultar por WhatsApp
+                    </button>
+                `;
+
+                container.appendChild(workshopDiv);
+            });
+        }
+
+        function goToMercadoLibre(productName) {
+            const mlLink = `https://listado.mercadolibre.com.ar/search?q=${encodeURIComponent(productName)}`;
+            window.open(mlLink, '_blank');
+        }
+
+        function sendWhatsAppMessage(phone, workshopName) {
+            const userData = JSON.parse(localStorage.getItem('golServiceUser'));
+            const currentService = JSON.parse(localStorage.getItem('currentService'));
+            const modelName = currentModelData.name;
+
+            const message = encodeURIComponent(
+                `Hola! 👋\n\nTengo un ${modelName} ${userData.year} con ${userData.km.toLocaleString('es-AR')} km.\n\nNecesito hacer el ${currentService.name}.\n\n¿Cuánto cuesta aprox? ¿Tienen stock de repuestos?\n\nGracias!`
+            );
+
+            const whatsappLink = `https://wa.me/${phone.replace(/\D/g, '')}?text=${message}`;
+            window.open(whatsappLink, '_blank');
+        }
+
+        // ===== MODAL: YA LO HICE =====
+        function openDoneModal() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('serviceDate').value = today;
+            document.getElementById('doneModal').classList.add('active');
+        }
+
+        function closeDoneModal() {
+            document.getElementById('doneModal').classList.remove('active');
+        }
+
+        function confirmServiceDone() {
+            const userData = JSON.parse(localStorage.getItem('golServiceUser'));
+            const currentService = JSON.parse(localStorage.getItem('currentService'));
+            const serviceDate = document.getElementById('serviceDate').value;
+
+            if (!serviceDate) {
+                alert('Por favor, selecciona una fecha');
+                return;
+            }
+
+            let history = JSON.parse(localStorage.getItem('historialMantenimientos')) || [];
+
+            const historyEntry = {
+                id: Date.now(),
+                serviceKm: currentServiceKm,
+                serviceName: currentService.name,
+                completedDate: serviceDate,
+                completedKm: userData.km,
+                createdAt: new Date().toISOString()
+            };
+
+            history.push(historyEntry);
+            localStorage.setItem('historialMantenimientos', JSON.stringify(history));
+
+            userData.lastServiceKm = currentServiceKm;
+            userData.lastServiceDate = serviceDate;
+            localStorage.setItem('golServiceUser', JSON.stringify(userData));
+
+            closeDoneModal();
+            alert(`✅ Service guardado!`);
+
+            showDashboard();
+        }
+
+        // ===== HISTORIAL =====
+        function loadHistorial() {
+            const history = JSON.parse(localStorage.getItem('historialMantenimientos')) || [];
+            const container = document.getElementById('historyContainer');
+
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-title">Sin servicios registrados</div>
+                    </div>
+                `;
+                return;
+            }
+
+            history.sort((a, b) => new Date(b.completedDate) - new Date(a.completedDate));
+
+            let timelineHTML = '<div class="timeline">';
+
+            history.forEach((entry) => {
+                const completedDate = new Date(entry.completedDate).toLocaleDateString('es-AR');
+                
+                timelineHTML += `
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-title">${entry.serviceName}</div>
+                            <div class="timeline-details">
+                                <div class="timeline-detail">
+                                    <div class="timeline-detail-label">KM del Service</div>
+                                    <div class="timeline-detail-value">${entry.serviceKm.toLocaleString('es-AR')} km</div>
+                                </div>
+                                <div class="timeline-detail">
+                                    <div class="timeline-detail-label">KM Actual</div>
+                                    <div class="timeline-detail-value">${entry.completedKm.toLocaleString('es-AR')} km</div>
+                                </div>
+                            </div>
+                            <div class="timeline-date">Realizado: ${completedDate}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            timelineHTML += '</div>';
+            container.innerHTML = timelineHTML;
+        }
+    </script>
+</body>
+</html>
