@@ -153,7 +153,7 @@
             border: 2px solid #e0e0e0;
             background: white;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
@@ -250,31 +250,123 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
-        .km-reminder {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 12px 16px;
-            border-radius: 8px;
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
             margin-bottom: 24px;
-            font-size: 13px;
-            color: #856404;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border-left: 4px solid #667eea;
+        }
+
+        .profile-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 16px;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .profile-details {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .profile-edit-btn {
+            padding: 6px 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .profile-edit-btn:hover {
+            background: #764ba2;
+        }
+
+        /* NOTIFICACIÓN DE KM */
+        .km-notification {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
             display: none;
         }
 
-        .km-reminder.active {
+        .km-notification.active {
             display: block;
+            animation: slideDown 0.3s ease;
         }
 
-        .km-reminder button {
-            background: #ffc107;
-            color: white;
+        .notification-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .notification-icon {
+            font-size: 24px;
+        }
+
+        .notification-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .notification-text {
+            font-size: 13px;
+            opacity: 0.95;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .notification-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .notification-btn {
+            padding: 10px 12px;
             border: none;
-            padding: 4px 12px;
-            border-radius: 4px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 12px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 11px;
-            margin-top: 8px;
+            transition: all 0.3s;
+        }
+
+        .notification-btn.primary {
+            background: white;
+            color: #f57c00;
+        }
+
+        .notification-btn.secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+        }
+
+        .notification-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .status-card {
@@ -474,7 +566,6 @@
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
-        /* PERFIL */
         #profileView {
             padding: 16px;
             padding-bottom: 80px;
@@ -544,7 +635,6 @@
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
-        /* DETALLES DEL SERVICE */
         #serviceDetailsView {
             padding: 16px;
             padding-bottom: 80px;
@@ -714,7 +804,7 @@
             background: white;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             transition: all 0.3s;
             color: #666;
@@ -807,6 +897,8 @@
             width: 100%;
             max-width: 500px;
             animation: slideUp 0.3s;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .modal-header {
@@ -970,6 +1062,11 @@
             to { transform: translateY(0); }
         }
 
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
         @media (max-width: 480px) {
             .action-buttons {
                 grid-template-columns: 1fr;
@@ -1052,21 +1149,21 @@
             <div class="usage-buttons">
                 <span class="usage-label">¿Cuántos km manejás por AÑO?</span>
                 <div class="buttons-grid">
-                    <button type="button" class="usage-btn" data-usage="6000">
+                    <button type="button" class="usage-btn" data-usage="5000">
                         <div>🚗</div>
-                        <div>6.000 km/año</div>
+                        <div>5.000 km</div>
                     </button>
-                    <button type="button" class="usage-btn" data-usage="12000">
+                    <button type="button" class="usage-btn" data-usage="10000">
                         <div>🚗</div>
-                        <div>12.000 km/año</div>
+                        <div>10.000 km</div>
                     </button>
-                    <button type="button" class="usage-btn" data-usage="18000">
+                    <button type="button" class="usage-btn" data-usage="15000">
                         <div>🚗</div>
-                        <div>18.000 km/año</div>
+                        <div>15.000 km</div>
                     </button>
-                    <button type="button" class="usage-btn" data-usage="24000">
+                    <button type="button" class="usage-btn" data-usage="20000">
                         <div>🚗</div>
-                        <div>24.000+ km/año</div>
+                        <div>20.000+ km</div>
                     </button>
                 </div>
                 <div class="error-message" id="usageError">Por favor, selecciona un uso</div>
@@ -1094,14 +1191,35 @@
         </div>
     </div>
 
-    <div class="km-reminder" id="kmReminder">
-        <strong>📅 Recordatorio mensual:</strong> Actualiza tu km para una estimación más precisa
-        <button onclick="toggleKmUpdate()">Actualizar</button>
+    <!-- TARJETA DE PERFIL -->
+    <div class="profile-card" id="profileCard" style="display: none;">
+        <div class="profile-card-header">
+            <div class="profile-info">
+                <div class="profile-name" id="profileCardName">Usuario</div>
+                <div class="profile-details" id="profileCardDetails">Sin datos</div>
+            </div>
+            <button class="profile-edit-btn" onclick="showProfile()">Editar</button>
+        </div>
+    </div>
+
+    <!-- NOTIFICACIÓN DE KM -->
+    <div class="km-notification" id="kmNotification">
+        <div class="notification-header">
+            <div class="notification-icon">📊</div>
+            <div class="notification-title">Actualiza tu km</div>
+        </div>
+        <div class="notification-text" id="notificationText">
+            Hace <span id="daysSinceUpdate">30</span> días que no actualizas tu km. Ayudanos a mejorar el cálculo de tu próximo mantenimiento.
+        </div>
+        <div class="notification-buttons">
+            <button class="notification-btn primary" onclick="showKmUpdate()">Actualizar ahora</button>
+            <button class="notification-btn secondary" onclick="dismissKmNotification()">Km correcto ✓</button>
+        </div>
     </div>
 
     <div class="status-card">
         <div class="status-badge ok" id="statusBadge">✓ Estás al día</div>
-        
+
         <div class="status-title" id="statusTitle">Próximo mantenimiento</div>
         <div class="status-subtitle" id="statusSubtitle">Te quedan 15.000 km o 8 meses aproximadamente</div>
 
@@ -1128,7 +1246,7 @@
     </div>
 
     <div class="action-buttons">
-        <button class="action-btn" onclick="toggleKmUpdate()">
+        <button class="action-btn" onclick="showKmUpdate()">
             <div class="action-btn-icon">📊</div>
             <div class="action-btn-text">Actualizar KM</div>
         </button>
@@ -1149,7 +1267,7 @@
     <div class="next-action-card">
         <div class="card-title">Próxima acción recomendada</div>
         <div class="service-name" id="nextServiceName">Service a 15.000 km</div>
-        
+
         <div class="service-info">
             <div class="info-block">
                 <div class="info-label">Faltan</div>
@@ -1281,12 +1399,12 @@
     </div>
 
     <div class="zones-section">
-        <div class="section-title">¿En qué provincia querés ver talleres?</div>
+        <div class="section-title">¿En qué provincia/ciudad querés ver talleres?</div>
         <div class="zones-grid" id="zonesGrid"></div>
     </div>
 
     <div class="workshops-section">
-        <div class="section-title">Talleres en tu provincia</div>
+        <div class="section-title">Talleres en tu zona</div>
         <div id="workshopsContainer"></div>
     </div>
 
@@ -1329,39 +1447,59 @@
 </div>
 
 <script>
-        // ===== BASE DE DATOS CON DATOS CORRECTOS =====
+        // ===== CONFIGURACIÓN: REEMPLAZA ESTO CON TU ENLACE DE GOOGLE SHEET =====
+        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/XXXXXX/export?format=csv&gid=0';
+        // ↑ REEMPLAZA "XXXXXX" con el ID de tu Google Sheet después de publicarlo
+
         const modelsDatabase = {
             gol: {
                 name: 'Gol',
                 yearRange: { min: 2006, max: 2022 },
-                maintenancePlan: { 15000: { name: 'Service de 15.000 km', description: 'Control general del auto', laborEstimate: '350 - 550', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }, { name: 'Filtro de aceite', brand: 'Bosch', quantity: 1, unit: 'un', price: 150 }, { name: 'Filtro de aire', brand: 'Bosch', quantity: 1, unit: 'un', price: 200 }] } }, 60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service mayor con cambio de correa de distribución', laborEstimate: '800 - 1.200', parts: { 'Correa y Accesorios': [{ name: 'Correa de distribución', brand: 'SKF/Gates', quantity: 1, unit: 'un', price: 2500 }, { name: 'Tensor de correa', brand: 'SKF', quantity: 1, unit: 'un', price: 650 }], 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }, { name: 'Refrigerante', brand: 'BASF', quantity: 5, unit: 'L', price: 200 }] } } }
+                maintenancePlan: {
+                    15000: { name: 'Service de 15.000 km', description: 'Control general del auto', laborEstimate: '350 - 550', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }, { name: 'Filtro de aceite', brand: 'Bosch', quantity: 1, unit: 'un', price: 150 }, { name: 'Filtro de aire', brand: 'Bosch', quantity: 1, unit: 'un', price: 200 }] } },
+                    60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service mayor con cambio de correa de distribución', laborEstimate: '800 - 1.200', parts: { 'Correa y Accesorios': [{ name: 'Correa de distribución', brand: 'SKF/Gates', quantity: 1, unit: 'un', price: 2500 }, { name: 'Tensor de correa', brand: 'SKF', quantity: 1, unit: 'un', price: 650 }], 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }, { name: 'Refrigerante', brand: 'BASF', quantity: 5, unit: 'L', price: 200 }] } }
+                }
             },
             golf: {
                 name: 'Golf',
                 yearRange: { min: 2006, max: 2021 },
                 motorTypes: ['1.6', 'tsi', 'cadena'],
                 maintenancePlan: {
-                    '1.6': { 15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }, 60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service con cambio de correa de distribución', laborEstimate: '900 - 1.300', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2800 }] } } },
-                    'tsi': { 15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }, 90000: { name: 'Service de 90.000 km + Cambio de correa', description: 'Service con cambio de correa de distribución', laborEstimate: '950 - 1.400', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2900 }] } } },
-                    'cadena': { 15000: { name: 'Service de 15.000 km', description: 'Control general (sin cambio de correa, usa cadena)', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } } }
+                    '1.6': {
+                        15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }, { name: 'Filtro de aceite', brand: 'Bosch', quantity: 1, unit: 'un', price: 150 }] } },
+                        60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service con cambio de correa de distribución', laborEstimate: '900 - 1.300', parts: { 'Correa y Tensor': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2800 }, { name: 'Tensor', brand: 'SKF', quantity: 1, unit: 'un', price: 550 }], 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }
+                    },
+                    'tsi': {
+                        15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }, { name: 'Filtro de aceite', brand: 'Mann', quantity: 1, unit: 'un', price: 180 }] } },
+                        90000: { name: 'Service de 90.000 km + Cambio de correa', description: 'Service con cambio de correa de distribución', laborEstimate: '950 - 1.400', parts: { 'Correa y Tensor': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2900 }, { name: 'Tensor', brand: 'SKF', quantity: 1, unit: 'un', price: 580 }], 'Fluidos': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }] } }
+                    },
+                    'cadena': {
+                        15000: { name: 'Service de 15.000 km', description: 'Control general (sin cambio de correa, usa cadena)', laborEstimate: '350 - 550', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-40', brand: 'Castrol', quantity: 5, unit: 'L', price: 320 }, { name: 'Filtro de aceite', brand: 'Bosch', quantity: 1, unit: 'un', price: 150 }] } }
+                    }
                 }
             },
             vento: {
                 name: 'Vento',
                 yearRange: { min: 2006, max: 2022 },
-                maintenancePlan: { 15000: { name: 'Service de 15.000 km', description: 'Control general (sin cambio de correa, usa cadena)', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } } }
+                maintenancePlan: {
+                    15000: { name: 'Service de 15.000 km', description: 'Control general (sin cambio de correa, usa cadena)', laborEstimate: '350 - 550', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-30', brand: 'YPF', quantity: 5, unit: 'L', price: 290 }] } }
+                }
             },
             suran: {
                 name: 'Suran',
                 yearRange: { min: 2006, max: 2019 },
-                maintenancePlan: { 15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } }, 60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service mayor con cambio de correa de distribución', laborEstimate: '900 - 1.300', parts: { 'Correa': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2700 }] } } }
+                maintenancePlan: {
+                    15000: { name: 'Service de 15.000 km', description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos y Filtros': [{ name: 'Aceite de motor 5W-30', brand: 'Shell', quantity: 6, unit: 'L', price: 310 }] } },
+                    60000: { name: 'Service de 60.000 km + Cambio de correa', description: 'Service mayor con cambio de correa de distribución', laborEstimate: '900 - 1.300', parts: { 'Correa y Tensor': [{ name: 'Correa de distribución', brand: 'SKF', quantity: 1, unit: 'un', price: 2700 }] } }
+                }
             }
         };
 
-        const provinces = ['Buenos Aires', 'Córdoba', 'Santa Fe', 'Mendoza', 'Tucumán', 'Entre Ríos', 'Misiones', 'Corrientes', 'San Juan', 'Catamarca', 'La Rioja', 'Santiago del Estero', 'Formosa', 'Chaco', 'Jujuy', 'Salta', 'Neuquén', 'Río Negro', 'Chubut', 'Santa Cruz', 'Tierra del Fuego'];
+        const zones = ['CABA', 'Buenos Aires', 'Córdoba', 'Santa Fe', 'Mendoza', 'Tucumán', 'Entre Ríos', 'Misiones', 'Corrientes', 'San Juan', 'Catamarca', 'La Rioja', 'Santiago del Estero', 'Formosa', 'Chaco', 'Jujuy', 'Salta', 'Neuquén', 'Río Negro', 'Chubut', 'Santa Cruz', 'Tierra del Fuego'];
 
-        const workshopsByProvince = {
-            'Buenos Aires': [{ name: 'Taller VW Expert - CABA', rating: 4.8, reviews: 127, phone: '1140123456' }, { name: 'Service Premium VW - La Plata', rating: 4.6, reviews: 89, phone: '1140234567' }],
+        const workshopsByZone = {
+            'CABA': [{ name: 'Taller VW Expert - CABA', rating: 4.8, reviews: 127, phone: '1140123456' }, { name: 'Service Premium VW - Centro', rating: 4.6, reviews: 89, phone: '1140234567' }],
+            'Buenos Aires': [{ name: 'Service Buenos Aires - La Plata', rating: 4.7, reviews: 89, phone: '2214567890' }, { name: 'VW Service Zona Sur', rating: 4.5, reviews: 56, phone: '2235678901' }],
             'Córdoba': [{ name: 'VW Service Córdoba', rating: 4.7, reviews: 89, phone: '3514567890' }],
             'Santa Fe': [{ name: 'Service Santa Fe', rating: 4.5, reviews: 56, phone: '3425678901' }],
             'Mendoza': [{ name: 'Taller VW Mendoza', rating: 4.7, reviews: 102, phone: '2616789012' }],
@@ -1370,7 +1508,7 @@
 
         let selectedModel = null;
         let selectedMotor = null;
-        let selectedZone = 'Buenos Aires';
+        let selectedZone = 'CABA';
         let currentServiceKm = 15000;
         let selectedUsage = null;
         let currentModelData = null;
@@ -1381,7 +1519,6 @@
         });
 
         function initOnboarding() {
-            const yearSelect = document.getElementById('yearSelect');
             const modelBtns = document.querySelectorAll('.model-btn');
 
             modelBtns.forEach(btn => {
@@ -1393,7 +1530,7 @@
                     document.getElementById('modelError').style.display = 'none';
 
                     updateYearSelect(selectedModel);
-                    
+
                     if (selectedModel === 'golf') {
                         document.getElementById('motorSelectorGroup').style.display = 'block';
                     } else {
@@ -1524,6 +1661,10 @@
                 document.getElementById('profilePatente').value = profileData.patente || '';
                 document.getElementById('profileGenero').value = profileData.genero || '';
                 document.getElementById('profileColor').value = profileData.color || '';
+
+                document.getElementById('profileCard').style.display = 'block';
+                document.getElementById('profileCardName').textContent = `${profileData.nombre} ${profileData.apellido}`;
+                document.getElementById('profileCardDetails').textContent = profileData.email;
             }
         }
 
@@ -1569,17 +1710,46 @@
             calculateNextService(userData);
             checkKmReminder(userData);
             updateEstimatedKmInfo(userData);
+            loadProfileData();
+        }
+
+        function checkKmReminder(userData) {
+            const lastUpdateDate = new Date(userData.lastUpdateDate);
+            const today = new Date();
+            const daysSinceUpdate = Math.floor((today - lastUpdateDate) / (1000 * 60 * 60 * 24));
+
+            const notification = document.getElementById('kmNotification');
+
+            if (daysSinceUpdate >= 30) {
+                notification.classList.add('active');
+                document.getElementById('daysSinceUpdate').textContent = daysSinceUpdate;
+
+                // Mes 2: Cambiar a recordatorio de email
+                if (daysSinceUpdate >= 60) {
+                    document.getElementById('notificationText').innerHTML =
+                        `<strong>⚠️ Recordatorio por email:</strong> Hace ${daysSinceUpdate} días que no actualizas tu km. Hemos enviado un recordatorio a tu email.`;
+                }
+            } else {
+                notification.classList.remove('active');
+            }
+        }
+
+        function dismissKmNotification() {
+            const userData = JSON.parse(localStorage.getItem('golServiceUser'));
+            userData.lastUpdateDate = new Date().toISOString();
+            localStorage.setItem('golServiceUser', JSON.stringify(userData));
+            document.getElementById('kmNotification').classList.remove('active');
+            alert('✅ Km actualizado. Próximo recordatorio en 30 días.');
         }
 
         function calculateNextService(userData) {
             const currentKm = userData.km;
-            
+
             let plan = currentModelData.maintenancePlan;
             if (userData.motor && currentModelData.maintenancePlan[userData.motor]) {
                 plan = currentModelData.maintenancePlan[userData.motor];
             }
 
-            // Generar servicios dinámicamente cada 15.000 km
             const serviceIntervals = [];
             for (let km = 15000; km <= 300000; km += 15000) {
                 serviceIntervals.push(km);
@@ -1591,8 +1761,7 @@
             }
 
             currentServiceKm = nextService;
-            
-            // Obtener info del service del plan, o crear genérica
+
             let serviceInfo = plan[nextService];
             if (!serviceInfo) {
                 serviceInfo = { name: `Service de ${nextService.toLocaleString('es-AR')} km`, description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } };
@@ -1627,27 +1796,17 @@
             document.getElementById('statusBadge').textContent = status;
             document.getElementById('statusBadge').className = `status-badge ${badgeClass}`;
             document.getElementById('statusTitle').textContent = serviceInfo.name;
-            document.getElementById('statusSubtitle').textContent = 
+            document.getElementById('statusSubtitle').textContent =
                 `Te quedan ${kmRemaining.toLocaleString('es-AR')} km o ${monthsRemaining} meses aproximadamente`;
         }
 
-        function checkKmReminder(userData) {
-            const lastUpdateDate = new Date(userData.lastUpdateDate);
-            const today = new Date();
-            const daysSinceUpdate = Math.floor((today - lastUpdateDate) / (1000 * 60 * 60 * 24));
-
-            if (daysSinceUpdate >= 30) {
-                document.getElementById('kmReminder').classList.add('active');
-            } else {
-                document.getElementById('kmReminder').classList.remove('active');
-            }
-        }
-
-        function toggleKmUpdate() {
+        function showKmUpdate() {
             const section = document.getElementById('kmUpdateSection');
             if (section.style.display === 'none') {
                 section.style.display = 'block';
-                setTimeout(() => section.scrollIntoView({ behavior: 'smooth' }), 100);
+                setTimeout(() => {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
             } else {
                 section.style.display = 'none';
             }
@@ -1657,9 +1816,9 @@
             const dailyKm = (userData.annualUsage / 365).toFixed(1);
             const estimatedKmNextMonth = userData.km + Math.round(userData.annualUsage / 12);
 
-            document.getElementById('estimatedKmInfo').textContent = 
+            document.getElementById('estimatedKmInfo').textContent =
                 `En ~30 días (con uso de ${dailyKm} km/día) tendrás aprox. ${estimatedKmNextMonth.toLocaleString('es-AR')} km`;
-            
+
             document.getElementById('kmUpdateInput').value = estimatedKmNextMonth;
         }
 
@@ -1682,13 +1841,14 @@
             calculateNextService(userData);
             updateEstimatedKmInfo(userData);
             document.getElementById('kmUpdateSection').style.display = 'none';
-            
+            document.getElementById('kmNotification').classList.remove('active');
+
             alert('✅ Kilometraje actualizado');
         }
 
         function loadServiceDetails() {
             const userData = JSON.parse(localStorage.getItem('golServiceUser'));
-            
+
             let plan = currentModelData.maintenancePlan;
             if (userData.motor && currentModelData.maintenancePlan[userData.motor]) {
                 plan = currentModelData.maintenancePlan[userData.motor];
@@ -1760,12 +1920,12 @@
             const container = document.getElementById('zonesGrid');
             container.innerHTML = '';
 
-            provinces.forEach(province => {
+            zones.forEach(zone => {
                 const btn = document.createElement('button');
                 btn.className = 'zone-btn';
-                if (province === selectedZone) btn.classList.add('active');
-                btn.textContent = province;
-                btn.onclick = () => selectZone(province);
+                if (zone === selectedZone) btn.classList.add('active');
+                btn.textContent = zone;
+                btn.onclick = () => selectZone(zone);
                 container.appendChild(btn);
             });
         }
@@ -1780,10 +1940,10 @@
             const container = document.getElementById('workshopsContainer');
             container.innerHTML = '';
 
-            const workshops = workshopsByProvince[selectedZone] || [];
+            const workshops = workshopsByZone[selectedZone] || [];
 
             if (workshops.length === 0) {
-                container.innerHTML = '<p style="color: #999; font-size: 12px;">No hay talleres en esta provincia aún. Pronto agregaremos más.</p>';
+                container.innerHTML = '<p style="color: #999; font-size: 12px;">No hay talleres en esta zona aún. Pronto agregaremos más.</p>';
                 return;
             }
 
@@ -1886,7 +2046,7 @@
 
             history.forEach((entry) => {
                 const completedDate = new Date(entry.completedDate).toLocaleDateString('es-AR');
-                
+
                 timelineHTML += `
                     <div class="timeline-item">
                         <div class="timeline-content">
