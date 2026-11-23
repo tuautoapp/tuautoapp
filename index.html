@@ -1089,7 +1089,7 @@
 <body>
 
 <div style="background: #1a1a1a; color: #fff; text-align: center; font-size: 11px; padding: 6px; font-weight: 600; letter-spacing: 0.3px;">
-    🟢 tuAutoApp v5 · Repuestos sin duplicados
+    🟢 tuAutoApp v6 · Muestra la fuente de repuestos
 </div>
 
 <!-- ===== VISTA: ONBOARDING ===== -->
@@ -1633,6 +1633,7 @@
                     return {
                         name: km === 15000 ? 'Service de 15.000 km' : `Service de ${km.toLocaleString('es-AR')} km${hasBelt ? ' + Cambio de correa' : ''}`,
                         description: km === 15000 ? 'Control general' : 'Service mayor',
+                        source: 'Google Sheet',
                         laborEstimate: km === 15000 ? '350 - 550' : '800 - 1.200',
                         parts
                     };
@@ -1993,7 +1994,7 @@
             }
 
             document.getElementById('serviceKm').textContent = `${currentServiceKm.toLocaleString('es-AR')} km`;
-            document.getElementById('serviceDesc').textContent = service.description;
+            document.getElementById('serviceDesc').textContent = service.description + ' · Fuente: ' + (service.source || 'datos de respaldo');
             document.getElementById('laborEstimate').textContent = `$${service.laborEstimate}`;
 
             renderParts(service.parts);
