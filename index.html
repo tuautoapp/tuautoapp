@@ -1088,6 +1088,10 @@
 </head>
 <body>
 
+<div style="background: #1a1a1a; color: #fff; text-align: center; font-size: 11px; padding: 6px; font-weight: 600; letter-spacing: 0.3px;">
+    🟢 tuAutoApp v4 · Repuestos desde Google Sheet
+</div>
+
 <!-- ===== VISTA: ONBOARDING ===== -->
 <div id="onboardingView" class="view active">
     <div class="onboarding-container">
@@ -1144,6 +1148,16 @@
                 <label for="kmInput">¿Cuántos kilómetros tiene ahora?</label>
                 <input type="number" id="kmInput" placeholder="Ej: 45000" min="0" max="300000" required>
                 <div class="error-message" id="kmError">Ingresa un número entre 0 y 300.000 km</div>
+            </div>
+
+            <div class="form-group">
+                <label for="cajaSelect">¿Tu auto es manual o automático?</label>
+                <select id="cajaSelect">
+                    <option value="">Selecciona la caja</option>
+                    <option value="manual">Manual</option>
+                    <option value="automatica">Automática</option>
+                </select>
+                <div class="error-message" id="cajaError">Por favor, selecciona la caja</div>
             </div>
 
             <div class="usage-buttons">
@@ -1448,7 +1462,7 @@
 
 <script>
         // ===== CONFIGURACIÓN: REEMPLAZA ESTO CON TU ENLACE DE GOOGLE SHEET =====
-        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/XXXXXX/export?format=csv&gid=0';
+        const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRhA5Msv0Y8M61t8cvMBFRk03F9TqABBRP2Ug7syvN9UlD0c09_RTTSidPYPfm8ysuh1OD2wYdCED52/pub?gid=853687995&single=true&output=csv';
         // ↑ REEMPLAZA "XXXXXX" con el ID de tu Google Sheet después de publicarlo
 
         const modelsDatabase = {
@@ -1515,8 +1529,117 @@
 
         window.addEventListener('DOMContentLoaded', function() {
             initOnboarding();
-            checkUserData();
+            loadSheetData().then(() => checkUserData());
         });
+
+        let sheetRows = null;
+
+        function parseCSV(text) {
+            const rows = [];
+            let row = [], field = '', inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const c = text[i];
+                if (inQuotes) {
+                    if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+                    else if (c === '"') { inQuotes = false; }
+                    else { field += c; }
+                } else {
+                    if (c === '"') { inQuotes = true; }
+                    else if (c === ',') { row.push(field); field = ''; }
+                    else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+                    else if (c !== '\r') { field += c; }
+                }
+            }
+            if (field || row.length) { row.push(field); rows.push(row); }
+            return rows;
+        }
+
+        function loadSheetData() {
+            return fetch(GOOGLE_SHEET_URL)
+                .then(res => {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.text();
+                })
+                .then(text => {
+                    const lines = parseCSV(text);
+                    const header = lines[0].map(h => h.trim().toLowerCase());
+                    const col = name => header.indexOf(name);
+                    sheetRows = lines.slice(1)
+                        .filter(l => l.length > 5 && l[col('modelo')])
+                        .map(l => ({
+                            modelo: l[col('modelo')].trim(),
+                            anio: parseInt(l[col('año')]),
+                            motor: (l[col('motor')] || '').trim(),
+                            caja: (l[col('caja')] || '').trim(),
+                            km: parseInt(l[col('servicekm')]),
+                            categoria: (l[col('categoria')] || 'Otros').trim(),
+                            nombre: (l[col('nombrerepuesto')] || '').trim(),
+                            brand: (l[col('brand')] || '').trim(),
+                            quantity: parseFloat(l[col('quantity')]) || 1,
+                            unit: (l[col('unit')] || 'un').trim(),
+                            price: parseFloat(l[col('price')]) || 0
+                        }));
+                    if (!sheetRows.length) sheetRows = null;
+                })
+                .catch(err => {
+                    console.warn('No se pudo leer el Sheet, uso datos de respaldo:', err);
+                    sheetRows = null;
+                });
+        }
+
+        function getRowsForUser(userData) {
+            const modelName = currentModelData.name.toLowerCase();
+            let rows = sheetRows.filter(r => r.modelo.toLowerCase() === modelName);
+            if (!rows.length) return [];
+
+            if (userData.model === 'golf' && userData.motor) {
+                const motorRows = rows.filter(r => {
+                    if (userData.motor === 'tsi') return /TSI/i.test(r.motor);
+                    if (userData.motor === '1.6') return /EA111/i.test(r.motor);
+                    return !/TSI|EA111/i.test(r.motor);
+                });
+                if (motorRows.length) rows = motorRows;
+            }
+
+            if (userData.caja) {
+                const cajaRows = rows.filter(r => userData.caja === 'manual' ? /manual/i.test(r.caja) : !/manual/i.test(r.caja));
+                if (cajaRows.length) rows = cajaRows;
+            }
+
+            const userYear = parseInt(userData.year);
+            const years = [...new Set(rows.map(r => r.anio))];
+            const closest = years.reduce((best, y) => Math.abs(y - userYear) < Math.abs(best - userYear) ? y : best, years[0]);
+            return rows.filter(r => r.anio === closest);
+        }
+
+        function getServiceInfo(userData, km) {
+            if (sheetRows) {
+                const rows = getRowsForUser(userData);
+                const base = rows.filter(r => r.km === 15000);
+                const extra = km === 15000 ? [] : rows.filter(r => r.km === km);
+                const all = [...base, ...extra];
+
+                if (all.length) {
+                    const parts = {};
+                    all.forEach(r => {
+                        if (!parts[r.categoria]) parts[r.categoria] = [];
+                        parts[r.categoria].push({ name: r.nombre, brand: r.brand, quantity: r.quantity, unit: r.unit, price: r.price });
+                    });
+                    const hasBelt = extra.some(r => /correa/i.test(r.nombre));
+                    return {
+                        name: km === 15000 ? 'Service de 15.000 km' : `Service de ${km.toLocaleString('es-AR')} km${hasBelt ? ' + Cambio de correa' : ''}`,
+                        description: km === 15000 ? 'Control general' : 'Service mayor',
+                        laborEstimate: km === 15000 ? '350 - 550' : '800 - 1.200',
+                        parts
+                    };
+                }
+            }
+
+            // Respaldo: datos internos si el Sheet no está disponible
+            let plan = currentModelData.maintenancePlan;
+            if (userData.motor && plan[userData.motor]) plan = plan[userData.motor];
+            return plan[km] || { name: `Service de ${km.toLocaleString('es-AR')} km`, description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } };
+        }
 
         function initOnboarding() {
             const modelBtns = document.querySelectorAll('.model-btn');
@@ -1604,6 +1727,11 @@
                 isValid = false;
             }
 
+            if (!document.getElementById('cajaSelect').value) {
+                document.getElementById('cajaError').style.display = 'block';
+                isValid = false;
+            }
+
             if (!km || km < 0 || km > 300000) {
                 document.getElementById('kmError').style.display = 'block';
                 isValid = false;
@@ -1618,6 +1746,7 @@
                 const userData = {
                     model: selectedModel,
                     motor: selectedMotor,
+                    caja: document.getElementById('cajaSelect').value,
                     year: year,
                     km: parseInt(km),
                     annualUsage: parseInt(selectedUsage),
@@ -1762,7 +1891,7 @@
 
             currentServiceKm = nextService;
 
-            let serviceInfo = plan[nextService];
+            let serviceInfo = getServiceInfo(userData, nextService);
             if (!serviceInfo) {
                 serviceInfo = { name: `Service de ${nextService.toLocaleString('es-AR')} km`, description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } };
             }
@@ -1854,7 +1983,7 @@
                 plan = currentModelData.maintenancePlan[userData.motor];
             }
 
-            let service = plan[currentServiceKm];
+            let service = getServiceInfo(userData, currentServiceKm);
             if (!service) {
                 service = { name: `Service de ${currentServiceKm.toLocaleString('es-AR')} km`, description: 'Control general', laborEstimate: '350 - 550', parts: { 'Fluidos': [{ name: 'Aceite de motor 5W-30', brand: 'YPF/Mobil', quantity: 5, unit: 'L', price: 280 }] } };
             }
