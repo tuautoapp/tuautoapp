@@ -1089,7 +1089,7 @@
 <body>
 
 <div style="background: #1a1a1a; color: #fff; text-align: center; font-size: 11px; padding: 6px; font-weight: 600; letter-spacing: 0.3px;">
-    🟢 tuAutoApp v4 · Repuestos desde Google Sheet
+    🟢 tuAutoApp v5 · Repuestos sin duplicados
 </div>
 
 <!-- ===== VISTA: ONBOARDING ===== -->
@@ -1621,7 +1621,11 @@
 
                 if (all.length) {
                     const parts = {};
+                    const seen = new Set();
                     all.forEach(r => {
+                        const key = r.categoria + '|' + r.nombre + '|' + r.brand;
+                        if (seen.has(key)) return;
+                        seen.add(key);
                         if (!parts[r.categoria]) parts[r.categoria] = [];
                         parts[r.categoria].push({ name: r.nombre, brand: r.brand, quantity: r.quantity, unit: r.unit, price: r.price });
                     });
